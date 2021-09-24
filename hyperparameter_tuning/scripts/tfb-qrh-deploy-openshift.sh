@@ -259,7 +259,7 @@ function createInstances() {
 
                 user_options=$(echo ${OPTIONS_VAR} | tr ";" "\n")
 
-                OPTIONS_VAR=""
+                OPTIONS_VAR="-server -XX:+UseG1GC -XX:MaxRAMPercentage=70"
                 for useroption in ${user_options}
                 do
                         OPTIONS_VAR="${OPTIONS_VAR} ${useroption}"
