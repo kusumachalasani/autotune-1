@@ -280,6 +280,10 @@ function createInstances() {
                 do
                         if [ ! -z ${!jvtunable} ]; then
                                 OPTIONS_VAR="${OPTIONS_VAR} -XX:${jvtunable}=${!jvtunable}"
+		## Set ConGCThreads same as ParallelGCThreads to avoid errors
+				if [ ${jvtunable} == "ConcGCThreads" ]; then
+					OPTIONS_VAR="${OPTIONS_VAR} -XX:ParallelGCThreads=${!jvtunable}"
+				fi
                         fi
                 done
 

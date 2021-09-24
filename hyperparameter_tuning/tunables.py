@@ -37,7 +37,7 @@ def get_all_tunables():
                         '"objective_function": "transaction_response_time", "value_type": "double", "direction": ' \
                         '"minimize", "hpo_algo_impl": "optuna_tpe", "tunables": [{"name": "cpuRequest", "value_type": ' \
                         '"double", "upper_bound": 32, "lower_bound": 1, "step": 0.01}, {"name": "memoryRequest", ' \
-                        '"value_type": "integer", "upper_bound": 2048, "lower_bound": 270, "step": 1} , {"name": "quarkusthreadpoolcorethreads", ' \
+                        '"value_type": "integer", "upper_bound": 8192, "lower_bound": 270, "step": 1} , {"name": "quarkusthreadpoolcorethreads", ' \
                         '"value_type": "integer", "upper_bound": 256, "lower_bound": 3, "step": 1}, {"name": "quarkusthreadpoolqueuesize", ' \
                         '"value_type": "integer", "upper_bound": 10000, "lower_bound": 0, "step": 1}, {"name": "quarkusdatasourcejdbcminsize", ' \
                         '"value_type": "integer", "upper_bound": 31, "lower_bound": 2, "step": 1}, {"name": "quarkusdatasourcejdbcmaxsize", ' \
