@@ -295,7 +295,7 @@ function createInstances() {
                                 elif [ ${qtunable} == "quarkustpqueuesize" ]; then
                                         OPTIONS_VAR="${OPTIONS_VAR} -Dquarkus.thread-pool.queue-size=${!qtunable}"
                                 elif [ ${qtunable} == "quarkusdatasourcejdbcminsize" ]; then
-                                        OPTIONS_VAR="${OPTIONS_VAR} -Dquarkus.datasource.jdbc.min-size=${!qtunable}"
+                                        OPTIONS_VAR="${OPTIONS_VAR} -Dquarkus.datasource.jdbc.min-size=${!qtunable} -Dquarkus.datasource.jdbc.initial-size=${!qtunable}"
                                 elif [ ${qtunable} == "quarkusdatasourcejdbcmaxsize" ]; then
                                         OPTIONS_VAR="${OPTIONS_VAR} -Dquarkus.datasource.jdbc.max-size=${!qtunable}"
                                 fi
