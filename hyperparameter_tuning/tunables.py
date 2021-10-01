@@ -36,23 +36,23 @@ def get_all_tunables():
     search_space_json = '{"id": "auto123", "application_name": "tfb-qrh-deployment-6d4c8678d4-jmz8x", ' \
                         '"objective_function": "transaction_response_time", "value_type": "double", "direction": ' \
                         '"minimize", "hpo_algo_impl": "optuna_tpe", "tunables": [{"name": "cpuRequest", "value_type": ' \
-                        '"double", "upper_bound": 32, "lower_bound": 1, "step": 0.01}, {"name": "memoryRequest", ' \
-                        '"value_type": "integer", "upper_bound": 8192, "lower_bound": 270, "step": 1} , {"name": "quarkusthreadpoolcorethreads", ' \
-                        '"value_type": "integer", "upper_bound": 256, "lower_bound": 3, "step": 1}, {"name": "quarkusthreadpoolqueuesize", ' \
+                        '"double", "upper_bound": 2, "lower_bound": 1, "step": 0.01}, {"name": "memoryRequest", ' \
+                        '"value_type": "integer", "upper_bound": 4096, "lower_bound": 270, "step": 1} , {"name": "quarkusthreadpoolcorethreads", ' \
+                        '"value_type": "integer", "upper_bound": 16, "lower_bound": 1, "step": 1}, {"name": "quarkusthreadpoolqueuesize", ' \
                         '"value_type": "integer", "upper_bound": 10000, "lower_bound": 0, "step": 1}, {"name": "quarkusdatasourcejdbcminsize", ' \
-                        '"value_type": "integer", "upper_bound": 31, "lower_bound": 2, "step": 1}, {"name": "quarkusdatasourcejdbcmaxsize", ' \
-                        '"value_type": "integer", "upper_bound": 100, "lower_bound": 32, "step": 1}, {"name": "FreqInlineSize", ' \
-                        '"value_type": "integer", "upper_bound": 1000, "lower_bound": 325, "step": 1}, {"name": "MaxInlineLevel", ' \
+                        '"value_type": "integer", "upper_bound": 6, "lower_bound": 1, "step": 1}, {"name": "quarkusdatasourcejdbcmaxsize", ' \
+                        '"value_type": "integer", "upper_bound": 40, "lower_bound": 6, "step": 1}, {"name": "FreqInlineSize", ' \
+                        '"value_type": "integer", "upper_bound": 500, "lower_bound": 325, "step": 1}, {"name": "MaxInlineLevel", ' \
                         '"value_type": "integer", "upper_bound": 50, "lower_bound": 9, "step": 1}, {"name": "MinInliningThreshold", ' \
-                        '"value_type": "integer", "upper_bound": 500, "lower_bound": 0, "step": 1}, {"name": "CompileThreshold", ' \
-                        '"value_type": "integer", "upper_bound": 20000, "lower_bound": 5000, "step": 1}, {"name": "CompileThresholdScaling", ' \
-                        '"value_type": "double", "upper_bound": 20, "lower_bound": 1, "step": 0.01}, {"name": "ConcGCThreads", ' \
-                        '"value_type": "integer", "upper_bound": 32, "lower_bound": 1, "step": 1}, {"name": "InlineSmallCode", ' \
+                        '"value_type": "integer", "upper_bound": 200, "lower_bound": 0, "step": 1}, {"name": "CompileThreshold", ' \
+                        '"value_type": "integer", "upper_bound": 10000, "lower_bound": 1000, "step": 1}, {"name": "CompileThresholdScaling", ' \
+                        '"value_type": "double", "upper_bound": 15, "lower_bound": 1, "step": 0.01}, {"name": "ConcGCThreads", ' \
+                        '"value_type": "integer", "upper_bound": 4, "lower_bound": 1, "step": 1}, {"name": "InlineSmallCode", ' \
                         '"value_type": "integer", "upper_bound": 5000, "lower_bound": 500, "step": 1}, {"name": "LoopUnrollLimit", ' \
                         '"value_type": "integer", "upper_bound": 250, "lower_bound": 20, "step": 1}, {"name": "LoopUnrollMin", ' \
                         '"value_type": "integer", "upper_bound": 20, "lower_bound": 0, "step": 1}, {"name": "MinSurvivorRatio", ' \
                         '"value_type": "integer", "upper_bound": 48, "lower_bound": 3, "step": 1}, {"name": "NewRatio", ' \
-                        '"value_type": "integer", "upper_bound": 20, "lower_bound": 1, "step": 1}, {"name": "TieredStopAtLevel", ' \
+                        '"value_type": "integer", "upper_bound": 10, "lower_bound": 1, "step": 1}, {"name": "TieredStopAtLevel", ' \
                         '"value_type": "integer", "upper_bound": 4, "lower_bound": 0, "step": 1}, {"name": "TieredCompilation", ' \
                         '"value_type": "categorical", "choices": ["true", "false"]}, {"name": "AllowParallelDefineClass", ' \
                         '"value_type": "categorical", "choices": ["true", "false"]}, {"name": "AllowVectorizeOnDemand", ' \
