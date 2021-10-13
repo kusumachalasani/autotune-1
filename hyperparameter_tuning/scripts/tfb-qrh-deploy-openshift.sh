@@ -67,6 +67,9 @@ do
 	case ${gopts} in
 	-)
 		case "${OPTARG}" in
+			dbhost=*)
+                                DB_HOSTNAME=${OPTARG#*=}
+                                ;;
 			cpureq=*)
 				CPU_REQ=${OPTARG#*=}
 				;;
@@ -307,7 +310,7 @@ function createInstances() {
                 sed -i '/env:/a \ \ \ \ \ \ \ \ \ \ - name: "JAVA_OPTIONS"' ${MANIFESTS_DIR}/quarkus-resteasy-hibernate-${inst}.yaml
 
 		### Update postgres informations - specific to MW hardware runs
-		sed -i '/env:/a \ \ \ \ \ \ \ \ \ \ \ \ value: "jdbc:postgresql://mwperf-server02.perf.lab.eng.rdu2.redhat.com:5432/techempower?loggerLevel=OFF&disableColumnSanitiser=true&assumeMinServerVersion=12&sslmode=disable"' ${MANIFESTS_DIR}/quarkus-resteasy-hibernate-${inst}.yaml
+		sed -i '/env:/a \ \ \ \ \ \ \ \ \ \ \ \ value: "jdbc:postgresql://${DB_HOSTNAME}:5432/techempower?loggerLevel=OFF&disableColumnSanitiser=true&assumeMinServerVersion=12&sslmode=disable"' ${MANIFESTS_DIR}/quarkus-resteasy-hibernate-${inst}.yaml
 		sed -i '/env:/a \ \ \ \ \ \ \ \ \ \ - name: "QUARKUS_DATASOURCE_JDBC_URL"' ${MANIFESTS_DIR}/quarkus-resteasy-hibernate-${inst}.yaml
 
 		sed -i '/env:/a \ \ \ \ \ \ \ \ \ \ \ \ value: "techempower"' ${MANIFESTS_DIR}/quarkus-resteasy-hibernate-${inst}.yaml
