@@ -35,7 +35,7 @@ def get_all_tunables():
     # Placeholder code until the actual API parsing code is added
     search_space_json = '{"id": "auto123", "application_name": "tfb-qrh-deployment-6d4c8678d4-jmz8x", ' \
                         '"objective_function": "transaction_response_time", "value_type": "double", "direction": ' \
-                        '"minimize", "hpo_algo_impl": "optuna_tpe", "tunables": [{"name": "cpuRequest", "value_type": ' \
+                        '"maximize", "hpo_algo_impl": "optuna_tpe", "tunables": [{"name": "cpuRequest", "value_type": ' \
                         '"double", "upper_bound": 4, "lower_bound": 1, "step": 0.01}, {"name": "memoryRequest", ' \
                         '"value_type": "integer", "upper_bound": 4096, "lower_bound": 270, "step": 1} , {"name": "quarkusthreadpoolcorethreads", ' \
                         '"value_type": "integer", "upper_bound": 32, "lower_bound": 1, "step": 1}, {"name": "quarkusthreadpoolqueuesize", ' \
