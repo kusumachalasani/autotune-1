@@ -187,7 +187,10 @@ def perform_experiment(experiment_tunables):
         1 ,  338.3 , 765 , 0 , 0 , 0 , 0 , 0 , 0 ,  60.2367 , 21.4259 , 3.3294886353000983 , 410.36017895925215M , 0
         """
         file.write(data + "\n")
-        sla = data.split(" , ")[2]
+        thrpt = data.split(" , ")[1]
+        rsp = data.split(" , ")[2]
+        maxrsp = data.split(" , ")[3]
+        sla = ( 1.25 * float(thrpt) ) / ( 1.5 * float(rsp) ) / ( (0.25 * float(maxrsp) )/100 )
         file.close()
 
         create_experiment_data_file(experiment_data_file, rows)
