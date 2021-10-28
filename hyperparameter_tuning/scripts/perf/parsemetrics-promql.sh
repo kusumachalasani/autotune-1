@@ -325,11 +325,9 @@ function parseResults() {
                         total_latency_ms_quan_999_avg=$(echo ${total_latency_seconds_quan_999_avg}*1000 | bc -l)
                 elif [ ${metric} == "server_requests_max" ]; then
 			total_server_requests_ms_max=$(echo ${total_server_requests_max}*1000 | bc -l)
-		fi
-
 		## Convert http_seconds into ms
-                if [ ${metric} == "http_seconds_quan_50" ]; then
-                        total_http_ms_quan_50_avg=$(echo ${total_http_seconds_quan_50_avg}*1000 | bc -l)
+                elif [ ${metric} == "http_seconds_quan_50" ]; then
+                        total_http_ms_quan_50=$(echo ${total_http_seconds_quan_50}*1000 | bc -l)
                 elif [ ${metric} == "http_seconds_quan_95" ]; then
                         total_http_ms_quan_95_avg=$(echo ${total_http_seconds_quan_95_avg}*1000 | bc -l)
 		elif [ ${metric} == "http_seconds_quan_97" ]; then
