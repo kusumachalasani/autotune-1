@@ -391,10 +391,9 @@ function parseResults() {
 	echo ", ${total_latency_seconds_quan_50_avg} , ${total_latency_seconds_quan_95_avg} , ${total_latency_seconds_quan_98_avg} , ${total_latency_seconds_quan_99_avg} , ${total_latency_seconds_quan_999_avg}" >> ${RESULTS_DIR_J}/../Metrics-percentile-prom.log
 #	echo "${SCALE} , ${total_c_cpu_avg} , ${total_c_cpurequests_avg} , ${total_c_cpulimits_avg} , ${total_c_mem_avg} , ${total_c_memrequests_avg} , ${total_c_memlimits_avg} " >> ${RESULTS_DIR_J}/../Metrics-cluster.log
 	echo "${total_server_requests_thrpt_rate_1m_avg} , ${total_server_requests_rsp_time_rate_1m_avg} , ${total_server_requests_thrpt_rate_3m_avg} , ${total_server_requests_rsp_time_rate_3m_avg} , ${total_server_requests_thrpt_rate_5m_avg} , ${total_server_requests_rsp_time_rate_5m_avg} , ${total_server_requests_thrpt_rate_7m_avg} , ${total_server_requests_rsp_time_rate_7m_avg} , ${total_server_requests_thrpt_rate_9m_avg} , ${total_server_requests_rsp_time_rate_9m_avg} , ${total_server_requests_thrpt_rate_15m_avg} , ${total_server_requests_rsp_time_rate_15m_avg}" >> ${RESULTS_DIR_J}/../Metrics-rate-prom.log
-}
 	echo "${SCALE} , ${total_http_ms_quan_50} , ${total_maxspike_http_ms_quan_50} , ${total_http_ms_quan_95} , ${total_maxspike_http_ms_quan_95} , ${total_http_ms_quan_97} , ${total_maxspike_http_ms_quan_97} , , ${total_http_ms_quan_99} , ${total_maxspike_http_ms_quan_99} , , ${total_http_ms_quan_999} , ${total_maxspike_http_ms_quan_999} , ${total_http_ms_quan_9999} , ${total_maxspike_http_ms_quan_9999} , , ${total_http_ms_quan_99999} , ${total_maxspike_http_ms_quan_99999} " >> ${RESULTS_DIR_J}/../Metrics-quantiles-prom.log
-
 	echo "${SCALE} , ${total_maxspike_cpu_max} , ${total_maxspike_mem_max} "  >> ${RESULTS_DIR_J}/../Metrics-spikes-prom.log
+}
 
 POD_CPU_LOGS=(cpu)
 POD_MEM_LOGS=(mem memusage)
