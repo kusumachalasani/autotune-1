@@ -251,6 +251,12 @@ function parseResults() {
                                 cat ${RESULTS_DIR_J}/${poddatalog}-measure-${itr}.log | cut -d "," -f3 >> ${RESULTS_DIR_J}/${poddatalog}_min-measure-temp.log
                                 cat ${RESULTS_DIR_J}/${poddatalog}-measure-${itr}.log | cut -d "," -f4 >> ${RESULTS_DIR_J}/${poddatalog}_max-measure-temp.log
                         fi
+
+			if [ -s "${RESULTS_DIR_J}/${poddatalog}-warmup-${itr}.log" ]; then
+                                cat ${RESULTS_DIR_J}/${poddatalog}-warmup-${itr}.log | cut -d "," -f2 >> ${RESULTS_DIR_J}/${poddatalog}-warmup-temp.log
+                                cat ${RESULTS_DIR_J}/${poddatalog}-warmup-${itr}.log | cut -d "," -f3 >> ${RESULTS_DIR_J}/${poddatalog}_min-warmup-temp.log
+                                cat ${RESULTS_DIR_J}/${poddatalog}-warmup-${itr}.log | cut -d "," -f4 >> ${RESULTS_DIR_J}/${poddatalog}_max-warmup-temp.log
+                        fi
 		done
 		for podmemlog in "${POD_MEM_LOGS[@]}"
 		do
@@ -259,12 +265,23 @@ function parseResults() {
                                 cat ${RESULTS_DIR_J}/${podmemlog}-measure-${itr}.log | cut -d "," -f3 >> ${RESULTS_DIR_J}/${podmemlog}_min-measure-temp.log
                                 cat ${RESULTS_DIR_J}/${podmemlog}-measure-${itr}.log | cut -d "," -f4 >> ${RESULTS_DIR_J}/${podmemlog}_max-measure-temp.log
                         fi
+
+			if [ -s "${RESULTS_DIR_J}/${podmemlog}-warmup-${itr}.log" ]; then
+                                cat ${RESULTS_DIR_J}/${podmemlog}-warmup-${itr}.log | cut -d "," -f2 >> ${RESULTS_DIR_J}/${podmemlog}-warmup-temp.log
+                                cat ${RESULTS_DIR_J}/${podmemlog}-warmup-${itr}.log | cut -d "," -f3 >> ${RESULTS_DIR_J}/${podmemlog}_min-warmup-temp.log
+                                cat ${RESULTS_DIR_J}/${podmemlog}-warmup-${itr}.log | cut -d "," -f4 >> ${RESULTS_DIR_J}/${podmemlog}_max-warmup-temp.log
+                        fi
+
 		done
 		for podmmlog in "${MICROMETER_LOGS[@]}"
 		do
 			if [ -s "${RESULTS_DIR_J}/${podmmlog}-measure-${itr}.log" ]; then
                                 cat ${RESULTS_DIR_J}/${podmmlog}-measure-${itr}.log >> ${RESULTS_DIR_J}/${podmmlog}-measure-temp.log
                         fi
+			if [ -s "${RESULTS_DIR_J}/${podmmlog}-warmup-${itr}.log" ]; then
+                                cat ${RESULTS_DIR_J}/${podmmlog}-warmup-${itr}.log >> ${RESULTS_DIR_J}/${podmmlog}-warmup-temp.log
+                        fi
+
 		done
 		for podmetriclog in "${METRIC_LOGS[@]}"
 		do
@@ -287,13 +304,25 @@ function parseResults() {
 			else
 				eval total_${metric}=0
 			fi
-		elif [ ${metric} == "cpu_max" ] || [ ${metric} == "mem_max" ] || [ ${metric} == "latency_seconds_max" ] || [ ${metric} == "server_requests_max" ] || [ ${metric} == "http_seconds_quan_50" ]; then
+		elif [ ${metric} == "cpu_max" ] || [ ${metric} == "mem_max" ] || [ ${metric} == "latency_seconds_max" ] || [ ${metric} == "server_requests_max" ] || [ ${metric} == "http_seconds_quan_50" ] || [ ${metric} == "http_seconds_quan_75" ] || [ ${metric} == "http_seconds_quan_95" ] || [ ${metric} == "http_seconds_quan_99" ] || [ ${metric} == "http_seconds_quan_999" ] || [ ${metric} == "http_seconds_quan_9999" ] || [ ${metric} == "http_seconds_quan_99999" ]; then
 			maxval=$(echo `calcMax ${RESULTS_DIR_J}/${metric}-measure-temp.log`)
+			
+			## Append warmup and measure data into single log
+			cat ${RESULTS_DIR_J}/${metric}-measure-temp.log > ${RESULTS_DIR_J}/${metric}-spiketemp.log
+			cat ${RESULTS_DIR_J}/${metric}-warmup-temp.log > ${RESULTS_DIR_J}/${metric}-spiketemp.log
+			maxspikeval=$(echo `calcMax ${RESULTS_DIR_J}/${metric}-spiketemp.log`)
+
 			if [ ! -z ${maxval} ]; then
 				eval total_${metric}=${maxval}
 			else
 				eval total_${metric}=0
 			fi
+
+			if [ ! -z ${maxspikeval} ]; then
+                                eval total_maxspike_${metric}=${maxspikeval}
+                        else
+                                eval total_maxspike_${metric}=0
+                        fi
 		else
 			val=$(echo `calcAvg ${RESULTS_DIR_J}/${metric}-measure-temp.log | cut -d "=" -f2`)
 			if [ ! -z ${val} ]; then
@@ -328,23 +357,30 @@ function parseResults() {
 		## Convert http_seconds into ms
                 elif [ ${metric} == "http_seconds_quan_50" ]; then
                         total_http_ms_quan_50=$(echo ${total_http_seconds_quan_50}*1000 | bc -l)
+			total_maxspike_http_ms_quan_50=$(echo ${total_maxspike_http_seconds_quan_50}*1000 | bc -l)
                 elif [ ${metric} == "http_seconds_quan_95" ]; then
-                        total_http_ms_quan_95_avg=$(echo ${total_http_seconds_quan_95_avg}*1000 | bc -l)
+                        total_http_ms_quan_95=$(echo ${total_http_seconds_quan_95}*1000 | bc -l)
+			total_maxspike_http_ms_quan_95=$(echo ${total_maxspike_http_seconds_quan_95}*1000 | bc -l)
 		elif [ ${metric} == "http_seconds_quan_97" ]; then
-                        total_http_ms_quan_97_avg=$(echo ${total_http_seconds_quan_97_avg}*1000 | bc -l)
+                        total_http_ms_quan_97=$(echo ${total_http_seconds_quan_97}*1000 | bc -l)
+			total_maxspike_http_ms_quan_97=$(echo ${total_maxspike_http_seconds_quan_97}*1000 | bc -l)
                 elif [ ${metric} == "http_seconds_quan_98" ]; then
-                        total_http_ms_quan_98_avg=$(echo ${total_http_seconds_quan_98_avg}*1000 | bc -l)
+                        total_http_ms_quan_98=$(echo ${total_http_seconds_quan_98}*1000 | bc -l)
+			total_maxspike_http_ms_quan_98=$(echo ${total_maxspike_http_seconds_quan_98}*1000 | bc -l)
                 elif [ ${metric} == "http_seconds_quan_99" ]; then
-                        total_http_ms_quan_99_avg=$(echo ${total_http_seconds_quan_99_avg}*1000 | bc -l)
+                        total_http_ms_quan_99=$(echo ${total_http_seconds_quan_99}*1000 | bc -l)
+			total_maxspike_http_ms_quan_99=$(echo ${total_maxspike_http_seconds_quan_99}*1000 | bc -l)
                 elif [ ${metric} == "http_seconds_quan_999" ]; then
-                        total_http_ms_quan_999_avg=$(echo ${total_http_seconds_quan_999_avg}*1000 | bc -l)
+                        total_http_ms_quan_999=$(echo ${total_http_seconds_quan_999}*1000 | bc -l)
+			total_maxspike_http_ms_quan_999=$(echo ${total_maxspike_http_seconds_quan_999}*1000 | bc -l)
 		elif [ ${metric} == "http_seconds_quan_9999" ]; then
-                        total_http_ms_quan_9999_avg=$(echo ${total_http_seconds_quan_9999_avg}*1000 | bc -l)
+                        total_http_ms_quan_9999=$(echo ${total_http_seconds_quan_9999}*1000 | bc -l)
+			total_maxspike_http_ms_quan_9999=$(echo ${total_maxspike_http_seconds_quan_9999}*1000 | bc -l)
 		elif [ ${metric} == "http_seconds_quan_99999" ]; then
-                        total_http_ms_quan_99999_avg=$(echo ${total_http_seconds_quan_99999_avg}*1000 | bc -l)
+                        total_http_ms_quan_99999=$(echo ${total_http_seconds_quan_99999}*1000 | bc -l)
+			total_maxspike_http_ms_quan_99999=$(echo ${total_maxspike_http_seconds_quan_99999}*1000 | bc -l)
                 fi
 
-			
 		fi
 	done
 
@@ -356,6 +392,9 @@ function parseResults() {
 #	echo "${SCALE} , ${total_c_cpu_avg} , ${total_c_cpurequests_avg} , ${total_c_cpulimits_avg} , ${total_c_mem_avg} , ${total_c_memrequests_avg} , ${total_c_memlimits_avg} " >> ${RESULTS_DIR_J}/../Metrics-cluster.log
 	echo "${total_server_requests_thrpt_rate_1m_avg} , ${total_server_requests_rsp_time_rate_1m_avg} , ${total_server_requests_thrpt_rate_3m_avg} , ${total_server_requests_rsp_time_rate_3m_avg} , ${total_server_requests_thrpt_rate_5m_avg} , ${total_server_requests_rsp_time_rate_5m_avg} , ${total_server_requests_thrpt_rate_7m_avg} , ${total_server_requests_rsp_time_rate_7m_avg} , ${total_server_requests_thrpt_rate_9m_avg} , ${total_server_requests_rsp_time_rate_9m_avg} , ${total_server_requests_thrpt_rate_15m_avg} , ${total_server_requests_rsp_time_rate_15m_avg}" >> ${RESULTS_DIR_J}/../Metrics-rate-prom.log
 }
+	echo "${SCALE} , ${total_http_ms_quan_50} , ${total_maxspike_http_ms_quan_50} , ${total_http_ms_quan_95} , ${total_maxspike_http_ms_quan_95} , ${total_http_ms_quan_97} , ${total_maxspike_http_ms_quan_97} , , ${total_http_ms_quan_99} , ${total_maxspike_http_ms_quan_99} , , ${total_http_ms_quan_999} , ${total_maxspike_http_ms_quan_999} , ${total_http_ms_quan_9999} , ${total_maxspike_http_ms_quan_9999} , , ${total_http_ms_quan_99999} , ${total_maxspike_http_ms_quan_99999} " >> ${RESULTS_DIR_J}/../Metrics-quantiles-prom.log
+
+	echo "${SCALE} , ${total_maxspike_cpu_max} , ${total_maxspike_mem_max} "  >> ${RESULTS_DIR_J}/../Metrics-spikes-prom.log
 
 POD_CPU_LOGS=(cpu)
 POD_MEM_LOGS=(mem memusage)
