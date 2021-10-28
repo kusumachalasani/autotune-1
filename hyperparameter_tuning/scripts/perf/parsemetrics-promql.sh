@@ -140,6 +140,12 @@ function parsePodMicroMeterLog()
                         if [ -s "${RESULTS_DIR_P}/${MODE}-${TYPE}-${last_measure_number}.json" ]; then
                                 cat ${RESULTS_DIR_P}/${MODE}-${TYPE}-${last_measure_number}.json | cut -d ";" -f4 | cut -d "\"" -f1 | uniq | grep -v "^$" | sort -n |  tail -1 > ${RESULTS_DIR_J}/${MODE}-${TYPE}-${ITR}.log
                         fi
+		elif [[ ${MODE} == *"http_seconds_quan"* ]] ; then
+                        if [ -s "${RESULTS_DIR_P}/${MODE}-${TYPE}-${last_measure_number}.json" ]; then
+                              #  cat ${RESULTS_DIR_P}/${MODE}-${TYPE}-${last_measure_number}.json | cut -d ";" -f4 | cut -d "\"" -f1 | uniq | grep -v "^$" | sort -n |  tail -1 > ${RESULTS_DIR_J}/${MODE}-${TYPE}-${ITR}.log
+			      cat ${RESULTS_DIR_P}/${MODE}-${TYPE}*.json | cut -d ";" -f4 | cut -d "\"" -f1 | uniq | grep -v "^$" | sort -n |  tail -1 > ${RESULTS_DIR_J}/${MODE}-${TYPE}-${ITR}.log
+
+                        fi
                 fi
 }
 
@@ -281,7 +287,7 @@ function parseResults() {
 			else
 				eval total_${metric}=0
 			fi
-		elif [ ${metric} == "cpu_max" ] || [ ${metric} == "mem_max" ] || [ ${metric} == "latency_seconds_max" ] || [ ${metric} == "server_requests_max" ]; then
+		elif [ ${metric} == "cpu_max" ] || [ ${metric} == "mem_max" ] || [ ${metric} == "latency_seconds_max" ] || [ ${metric} == "server_requests_max" ] || [ ${metric} == "http_seconds_quan_50" ]; then
 			maxval=$(echo `calcMax ${RESULTS_DIR_J}/${metric}-measure-temp.log`)
 			if [ ! -z ${maxval} ]; then
 				eval total_${metric}=${maxval}
@@ -320,6 +326,26 @@ function parseResults() {
                 elif [ ${metric} == "server_requests_max" ]; then
 			total_server_requests_ms_max=$(echo ${total_server_requests_max}*1000 | bc -l)
 		fi
+
+		## Convert http_seconds into ms
+                if [ ${metric} == "http_seconds_quan_50" ]; then
+                        total_http_ms_quan_50_avg=$(echo ${total_http_seconds_quan_50_avg}*1000 | bc -l)
+                elif [ ${metric} == "http_seconds_quan_95" ]; then
+                        total_http_ms_quan_95_avg=$(echo ${total_http_seconds_quan_95_avg}*1000 | bc -l)
+		elif [ ${metric} == "http_seconds_quan_97" ]; then
+                        total_http_ms_quan_97_avg=$(echo ${total_http_seconds_quan_97_avg}*1000 | bc -l)
+                elif [ ${metric} == "http_seconds_quan_98" ]; then
+                        total_http_ms_quan_98_avg=$(echo ${total_http_seconds_quan_98_avg}*1000 | bc -l)
+                elif [ ${metric} == "http_seconds_quan_99" ]; then
+                        total_http_ms_quan_99_avg=$(echo ${total_http_seconds_quan_99_avg}*1000 | bc -l)
+                elif [ ${metric} == "http_seconds_quan_999" ]; then
+                        total_http_ms_quan_999_avg=$(echo ${total_http_seconds_quan_999_avg}*1000 | bc -l)
+		elif [ ${metric} == "http_seconds_quan_9999" ]; then
+                        total_http_ms_quan_9999_avg=$(echo ${total_http_seconds_quan_9999_avg}*1000 | bc -l)
+		elif [ ${metric} == "http_seconds_quan_99999" ]; then
+                        total_http_ms_quan_99999_avg=$(echo ${total_http_seconds_quan_99999_avg}*1000 | bc -l)
+                fi
+
 			
 		fi
 	done
@@ -339,7 +365,8 @@ CLUSTER_LOGS=(c_mem c_cpu)
 TIMER_RATE_LOGS=(app_timer_count_rate_1m app_timer_count_rate_3m app_timer_count_rate_5m app_timer_count_rate_7m app_timer_count_rate_9m app_timer_count_rate_15m app_timer_count_rate_30m app_timer_sum_rate_1m app_timer_sum_rate_3m app_timer_sum_rate_5m app_timer_sum_rate_7m app_timer_sum_rate_9m app_timer_sum_rate_15m app_timer_sum_rate_30m)
 SERVER_REQUESTS_RATE_LOGS=(server_requests_count_rate_1m server_requests_count_rate_3m server_requests_count_rate_5m server_requests_count_rate_7m server_requests_count_rate_9m server_requests_count_rate_15m server_requests_count_rate_30m server_requests_sum_rate_1m server_requests_sum_rate_3m server_requests_sum_rate_5m server_requests_sum_rate_7m server_requests_sum_rate_9m server_requests_sum_rate_15m server_requests_sum_rate_30m)
 LATENCY_P_LOGS=(latency_seconds_quan_50 latency_seconds_quan_95 latency_seconds_quan_98 latency_seconds_quan_99 latency_seconds_quan_999)
-MICROMETER_LOGS=(app_timer_sum app_timer_count ${TIMER_RATE_LOGS[@]} server_requests_sum server_requests_count server_requests_max ${SERVER_REQUESTS_RATE_LOGS[@]} ${LATENCY_P_LOGS[@]} latency_seconds_max)
+HTTP_P_LOGS=(http_seconds_quan_50 http_seconds_quan_95 http_seconds_quan_97 http_seconds_quan_98 http_seconds_quan_99 http_seconds_quan_999 http_seconds_quan_9999 http_seconds_quan_9999)
+MICROMETER_LOGS=(app_timer_sum app_timer_count ${TIMER_RATE_LOGS[@]} server_requests_sum server_requests_count server_requests_max ${SERVER_REQUESTS_RATE_LOGS[@]} ${LATENCY_P_LOGS[@]} latency_seconds_max ${HTTP_P_LOGS[@]})
 APP_CALC_METRIC_LOGS=(app_timer_rsp_time app_timer_thrpt app_timer_rsp_time_rate_3m app_timer_thrpt_rate_3m)
 SERVER_REQUESTS_METRIC_LOGS=(server_requests_rsp_time server_requests_thrpt server_requests_rsp_time_rate_3m server_requests_thrpt_rate_3m)
 METRIC_LOGS=(${APP_CALC_METRIC_LOGS[@]} ${SERVER_REQUESTS_METRIC_LOGS[@]})
