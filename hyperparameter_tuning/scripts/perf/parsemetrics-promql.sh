@@ -379,6 +379,22 @@ function parseResults() {
 		elif [ ${metric} == "http_seconds_quan_99999" ]; then
                         total_http_ms_quan_99999=$(echo ${total_http_seconds_quan_99999}*1000 | bc -l)
 			total_maxspike_http_ms_quan_99999=$(echo ${total_maxspike_http_seconds_quan_99999}*1000 | bc -l)
+		elif [ ${metric} == "http_seconds_quan_50_histo" ]; then
+                        total_http_ms_quan_50_histo_avg=$(echo ${total_http_seconds_quan_50_histo_avg}*1000 | bc -l)
+                elif [ ${metric} == "http_seconds_quan_95_histo" ]; then
+                        total_http_ms_quan_95_histo_avg=$(echo ${total_http_seconds_quan_95_histo_avg}*1000 | bc -l)
+                elif [ ${metric} == "http_seconds_quan_97_histo" ]; then
+                        total_http_ms_quan_97_histo_avg=$(echo ${total_http_seconds_quan_97_histo_avg}*1000 | bc -l)
+                elif [ ${metric} == "http_seconds_quan_98_histo" ]; then
+                        total_http_ms_quan_98_histo_avg=$(echo ${total_http_seconds_quan_98_histo_avg}*1000 | bc -l)
+                elif [ ${metric} == "http_seconds_quan_99_histo" ]; then
+                        total_http_ms_quan_99_histo_avg=$(echo ${total_http_seconds_quan_99_histo_avg}*1000 | bc -l)
+                elif [ ${metric} == "http_seconds_quan_999_histo" ]; then
+                        total_http_ms_quan_999_histo_avg=$(echo ${total_http_seconds_quan_999_histo_avg}*1000 | bc -l)
+                elif [ ${metric} == "http_seconds_quan_9999_histo" ]; then
+                        total_http_ms_quan_9999_histo_avg=$(echo ${total_http_seconds_quan_9999_histo_avg}*1000 | bc -l)
+                elif [ ${metric} == "http_seconds_quan_99999_histo" ]; then
+                        total_http_ms_quan_99999_histo_avg=$(echo ${total_http_seconds_quan_99999_histo_avg}*1000 | bc -l)
                 fi
 
 		fi
@@ -391,8 +407,10 @@ function parseResults() {
 	echo ", ${total_latency_seconds_quan_50_avg} , ${total_latency_seconds_quan_95_avg} , ${total_latency_seconds_quan_98_avg} , ${total_latency_seconds_quan_99_avg} , ${total_latency_seconds_quan_999_avg}" >> ${RESULTS_DIR_J}/../Metrics-percentile-prom.log
 #	echo "${SCALE} , ${total_c_cpu_avg} , ${total_c_cpurequests_avg} , ${total_c_cpulimits_avg} , ${total_c_mem_avg} , ${total_c_memrequests_avg} , ${total_c_memlimits_avg} " >> ${RESULTS_DIR_J}/../Metrics-cluster.log
 	echo "${total_server_requests_thrpt_rate_1m_avg} , ${total_server_requests_rsp_time_rate_1m_avg} , ${total_server_requests_thrpt_rate_3m_avg} , ${total_server_requests_rsp_time_rate_3m_avg} , ${total_server_requests_thrpt_rate_5m_avg} , ${total_server_requests_rsp_time_rate_5m_avg} , ${total_server_requests_thrpt_rate_7m_avg} , ${total_server_requests_rsp_time_rate_7m_avg} , ${total_server_requests_thrpt_rate_9m_avg} , ${total_server_requests_rsp_time_rate_9m_avg} , ${total_server_requests_thrpt_rate_15m_avg} , ${total_server_requests_rsp_time_rate_15m_avg}" >> ${RESULTS_DIR_J}/../Metrics-rate-prom.log
-	echo "${SCALE} , ${total_http_ms_quan_50} , ${total_maxspike_http_ms_quan_50} , ${total_http_ms_quan_95} , ${total_maxspike_http_ms_quan_95} , ${total_http_ms_quan_97} , ${total_maxspike_http_ms_quan_97} , , ${total_http_ms_quan_99} , ${total_maxspike_http_ms_quan_99} , , ${total_http_ms_quan_999} , ${total_maxspike_http_ms_quan_999} , ${total_http_ms_quan_9999} , ${total_maxspike_http_ms_quan_9999} , , ${total_http_ms_quan_99999} , ${total_maxspike_http_ms_quan_99999} " >> ${RESULTS_DIR_J}/../Metrics-quantiles-prom.log
+	echo "${SCALE} , ${total_http_ms_quan_50} , ${total_maxspike_http_ms_quan_50} , ${total_http_ms_quan_95} , ${total_maxspike_http_ms_quan_95} , ${total_http_ms_quan_97} , ${total_maxspike_http_ms_quan_97} , ${total_http_ms_quan_99} , ${total_maxspike_http_ms_quan_99} , ${total_http_ms_quan_999} , ${total_maxspike_http_ms_quan_999} , ${total_http_ms_quan_9999} , ${total_maxspike_http_ms_quan_9999} , ${total_http_ms_quan_99999} , ${total_maxspike_http_ms_quan_99999} , ${total_http_ms_quan_50_histo_avg} , ${total_http_ms_quan_95_histo_avg} , ${total_http_ms_quan_97_histo_avg} , ${total_http_ms_quan_99_histo_avg} , ${total_http_ms_quan_999_histo_avg} , ${total_http_ms_quan_9999_histo_avg} , ${total_http_ms_quan_99999_histo_avg}" >> ${RESULTS_DIR_J}/../Metrics-quantiles-prom.log
 	echo "${SCALE} , ${total_maxspike_cpu_max} , ${total_maxspike_mem_max} "  >> ${RESULTS_DIR_J}/../Metrics-spikes-prom.log
+
+	paste ${RESULTS_DIR_J}/http_seconds_quan_50_histo-measure-temp.log ${RESULTS_DIR_J}/http_seconds_quan_95_histo-measure-temp.log ${RESULTS_DIR_J}/http_seconds_quan_97_histo-measure-temp.log ${RESULTS_DIR_J}/http_seconds_quan_99_histo-measure-temp.log ${RESULTS_DIR_J}/http_seconds_quan_999_histo-measure-temp.log ${RESULTS_DIR_J}/http_seconds_quan_9999_histo-measure-temp.log ${RESULTS_DIR_J}/http_seconds_quan_99999_histo-measure-temp.log >> ${RESULTS_DIR_J}/../Metrics-histogram-prom.log
 }
 
 POD_CPU_LOGS=(cpu)
@@ -401,7 +419,7 @@ CLUSTER_LOGS=(c_mem c_cpu)
 TIMER_RATE_LOGS=(app_timer_count_rate_1m app_timer_count_rate_3m app_timer_count_rate_5m app_timer_count_rate_7m app_timer_count_rate_9m app_timer_count_rate_15m app_timer_count_rate_30m app_timer_sum_rate_1m app_timer_sum_rate_3m app_timer_sum_rate_5m app_timer_sum_rate_7m app_timer_sum_rate_9m app_timer_sum_rate_15m app_timer_sum_rate_30m)
 SERVER_REQUESTS_RATE_LOGS=(server_requests_count_rate_1m server_requests_count_rate_3m server_requests_count_rate_5m server_requests_count_rate_7m server_requests_count_rate_9m server_requests_count_rate_15m server_requests_count_rate_30m server_requests_sum_rate_1m server_requests_sum_rate_3m server_requests_sum_rate_5m server_requests_sum_rate_7m server_requests_sum_rate_9m server_requests_sum_rate_15m server_requests_sum_rate_30m)
 LATENCY_P_LOGS=(latency_seconds_quan_50 latency_seconds_quan_95 latency_seconds_quan_98 latency_seconds_quan_99 latency_seconds_quan_999)
-HTTP_P_LOGS=(http_seconds_quan_50 http_seconds_quan_95 http_seconds_quan_97 http_seconds_quan_98 http_seconds_quan_99 http_seconds_quan_999 http_seconds_quan_9999 http_seconds_quan_9999)
+HTTP_P_LOGS=(http_seconds_quan_50 http_seconds_quan_95 http_seconds_quan_97 http_seconds_quan_98 http_seconds_quan_99 http_seconds_quan_999 http_seconds_quan_9999 http_seconds_quan_99999 http_seconds_quan_50_histo http_seconds_quan_95_histo http_seconds_quan_97_histo http_seconds_quan_98_histo http_seconds_quan_99_histo http_seconds_quan_999_histo http_seconds_quan_9999_histo http_seconds_quan_99999_histo)
 MICROMETER_LOGS=(app_timer_sum app_timer_count ${TIMER_RATE_LOGS[@]} server_requests_sum server_requests_count server_requests_max ${SERVER_REQUESTS_RATE_LOGS[@]} ${LATENCY_P_LOGS[@]} latency_seconds_max ${HTTP_P_LOGS[@]})
 APP_CALC_METRIC_LOGS=(app_timer_rsp_time app_timer_thrpt app_timer_rsp_time_rate_3m app_timer_thrpt_rate_3m)
 SERVER_REQUESTS_METRIC_LOGS=(server_requests_rsp_time server_requests_thrpt server_requests_rsp_time_rate_3m server_requests_thrpt_rate_3m)
