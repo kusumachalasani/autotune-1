@@ -308,8 +308,8 @@ function parseResults() {
 			maxval=$(echo `calcMax ${RESULTS_DIR_J}/${metric}-measure-temp.log`)
 			
 			## Append warmup and measure data into single log
-			cat ${RESULTS_DIR_J}/${metric}-measure-temp.log > ${RESULTS_DIR_J}/${metric}-spiketemp.log
-			cat ${RESULTS_DIR_J}/${metric}-warmup-temp.log > ${RESULTS_DIR_J}/${metric}-spiketemp.log
+			cat ${RESULTS_DIR_J}/${metric}-measure-temp.log >> ${RESULTS_DIR_J}/${metric}-spiketemp.log
+			cat ${RESULTS_DIR_J}/${metric}-warmup-temp.log >> ${RESULTS_DIR_J}/${metric}-spiketemp.log
 			maxspikeval=$(echo `calcMax ${RESULTS_DIR_J}/${metric}-spiketemp.log`)
 
 			if [ ! -z ${maxval} ]; then
