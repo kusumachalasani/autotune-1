@@ -446,6 +446,33 @@ function get_server_requests_count_rate()
 
 }
 
+#### Collect per server_requests_sum for last 1,3,5,7,9,15 and 30 mins.
+function get_server_requests_sum_rate_uri()
+{
+        URL=$1
+        TOKEN=$2
+        RESULTS_DIR=$3
+        ITER=$4
+        APP_NAME=$5
+        # Processing curl output "timestamp value" using jq tool.
+        curl --silent -G -kH "Authorization: Bearer ${TOKEN}" --data-urlencode 'query=rate(http_server_requests_seconds_sum{uri="/db"}[1m])' ${URL} | jq '[ .data.result[] | [ .value[0], .metric.namespace, .metric.pod, .value[1]|tostring] | join(";") ]' | grep "${APP_NAME}" >> ${RESULTS_DIR}/server_requests_sum_rate_1m_uri-${ITER}.json
+        curl --silent -G -kH "Authorization: Bearer ${TOKEN}" --data-urlencode 'query=rate(http_server_requests_seconds_sum{uri="/db"}[3m])' ${URL} | jq '[ .data.result[] | [ .value[0], .metric.namespace, .metric.pod, .value[1]|tostring] | join(";") ]' | grep "${APP_NAME}" >> ${RESULTS_DIR}/server_requests_sum_rate_3m_uri-${ITER}.json
+}
+
+## Collect per second server_requests_count for last 1,3,5,7,9,15 and 30 mins.
+function get_server_requests_count_rate_uri()
+{
+        URL=$1
+        TOKEN=$2
+        RESULTS_DIR=$3
+        ITER=$4
+        APP_NAME=$5
+        # Processing curl output "timestamp value" using jq tool.
+        curl --silent -G -kH "Authorization: Bearer ${TOKEN}" --data-urlencode 'query=rate(http_server_requests_seconds_count{uri="/db"}[1m])' ${URL} | jq '[ .data.result[] | [ .value[0], .metric.namespace, .metric.pod, .value[1]|tostring] | join(";") ]' | grep "${APP_NAME}" >> ${RESULTS_DIR}/server_requests_count_rate_1m_uri-${ITER}.json
+        curl --silent -G -kH "Authorization: Bearer ${TOKEN}" --data-urlencode 'query=rate(http_server_requests_seconds_count{uri="/db"}[3m])' ${URL} | jq '[ .data.result[] | [ .value[0], .metric.namespace, .metric.pod, .value[1]|tostring] | join(";") ]' | grep "${APP_NAME}" >> ${RESULTS_DIR}/server_requests_count_rate_3m_uri-${ITER}.json
+
+}
+
 function get_latency_quantiles() {
 
 	URL=$1
@@ -544,3 +571,7 @@ sleep ${TIMEOUT}
 get_server_requests_sum_rate ${URL} ${TOKEN} ${RESULTS_DIR} ${ITER} ${APP_NAME} &
 get_server_requests_count_rate ${URL} ${TOKEN} ${RESULTS_DIR} ${ITER} ${APP_NAME} &
 get_http_quantiles ${URL} ${TOKEN} ${RESULTS_DIR} ${ITER} ${APP_NAME} &
+
+get_server_requests_sum_rate_uri ${URL} ${TOKEN} ${RESULTS_DIR} ${ITER} ${APP_NAME} &
+get_server_requests_count_rate_uri ${URL} ${TOKEN} ${RESULTS_DIR} ${ITER} ${APP_NAME} &
+
