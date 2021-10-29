@@ -190,7 +190,7 @@ def perform_experiment(experiment_tunables):
         thrpt = data.split(" , ")[1]
         rsp = data.split(" , ")[2]
         maxrsp = data.split(" , ")[3]
-        sla = ( float(thrpt) / float(rsp) ) / ( float(maxrsp) )
+        sla = ( ( 100.0 * float(thrpt) ) / float(rsp) ) / ( float(maxrsp) )
 
         file.close()
 
