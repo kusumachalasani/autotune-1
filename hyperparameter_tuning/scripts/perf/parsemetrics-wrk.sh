@@ -128,7 +128,7 @@ function parseResults() {
 	fi
 
 	if [ ${total_weberror_avg} -ge 50 ]; then
-		echo "1 , 99999 , 99999 , 99999 , 99999 , 99999 , 999999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999" >> ${RESULTS_DIR_J}/../Metrics-prom.log
+		echo "1 , 99999 , 99999 , 99999 , 99999 , 99999 , 999999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999 , " >> ${RESULTS_DIR_J}/../Metrics-prom.log
         	echo ", 99999 , 99999 , 99999 , 99999 , 9999 , 0 , 0" >> ${RESULTS_DIR_J}/../Metrics-wrk.log
 	fi
 
