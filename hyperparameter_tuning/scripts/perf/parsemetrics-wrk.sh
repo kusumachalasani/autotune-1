@@ -18,6 +18,8 @@
 
 CURRENT_DIR="$(dirname "$(realpath "$0")")"
 source ${CURRENT_DIR}/../utils/common.sh
+#source ${CURRENT_DIR}/../tfb-common.sh
+#APP_NAME="tfb-qrh"
 
 # Parse the result log files
 # input:Type of run(warmup|measure), total number of runs, total number of iteration
@@ -35,7 +37,11 @@ function parseData() {
 		responsetime=0
 		max_responsetime=0
 		stddev_responsetime=0
-		SVC_APIS=($(oc status --namespace=${NAMESPACE} | grep "tfb-qrh" | grep port | cut -d " " -f1 | cut -d "/" -f3))
+		if [[ ${CLUSTER_TYPE} == "openshift" ]]; then
+			SVC_APIS=($(oc status --namespace=${NAMESPACE} | grep "${APP_NAME}" | grep port | cut -d " " -f1 | cut -d "/" -f3))
+		elif [[ ${CLUSTER_TYPE} == "minikube" ]]; then
+			SVC_APIS=($(${K_EXEC} get svc --namespace=${NAMESPACE} | grep "${APP_NAME}" | cut -d " " -f1))
+		fi
 		for svc_api  in "${SVC_APIS[@]}"
 		do
 			throughput=0
@@ -77,6 +83,10 @@ function parseData() {
 			if [ "${weberrors}" != "" ]; then
 				wer_sum=`expr ${wer_sum} + ${weberrors}`
 			fi
+			if [[ ${total_weberror_avg} -ge 500 ]]; then
+				echo "1 , 99999 , 99999 , 99999 , 99999 , 99999 , 999999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999" >> ${RESULTS_DIR_J}/../Metrics-prom.log
+        			echo ", 99999 , 99999 , 99999 , 99999 , 9999 , 0 , 0" >> ${RESULTS_DIR_J}/../Metrics-wrk.log
+			fi
 		done
 		echo "${run},${thrp_sum},${resp_sum},${wer_sum},${max_responsetime},${stddev_responsetime}" >> ${RESULTS_DIR_J}/Throughput-${TYPE}-${itr}.log
 		echo "${run} , ${CPU_REQ} , ${MEM_REQ} , ${CPU_LIM} , ${MEM_LIM} , ${thrp_sum} , ${responsetime} , ${wer_sum} , ${max_responsetime} , ${stddev_responsetime}" >> ${RESULTS_DIR_J}/Throughput-${TYPE}-raw.log
@@ -104,7 +114,7 @@ function parseResults() {
 	done
 	###### Add different raw logs we want to merge
 	#Cumulative raw data
-	paste ${RESULTS_DIR_J}/Throughput-measure-raw.log ${RESULTS_DIR_J}/cpu-measure-raw.log ${RESULTS_DIR_J}/mem-measure-raw.log >>  ${RESULTS_DIR_J}/../Metrics-raw.log
+	paste ${RESULTS_DIR_J}/Throughput-measure-raw.log >>  ${RESULTS_DIR_J}/../Metrics-raw.log
 
 	for metric in "${THROUGHPUT_LOGS[@]}"
 	do
@@ -126,12 +136,6 @@ function parseResults() {
 	if [ ${total_weberror_avg} != 0 ]; then
 		echo "There are web_errors during the load run. For more details check in the results directory mentioned in setup.log"
 	fi
-
-	if [ ${total_weberror_avg} -ge 50 ]; then
-		echo "1 , 99999 , 99999 , 99999 , 99999 , 99999 , 999999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999 , 99999 , " >> ${RESULTS_DIR_J}/../Metrics-prom.log
-        	echo ", 99999 , 99999 , 99999 , 99999 , 9999 , 0 , 0" >> ${RESULTS_DIR_J}/../Metrics-wrk.log
-	fi
-
 	echo ", ${total_throughput_avg} , ${total_responsetime_avg} , ${total_responsetime_max} , ${total_stdev_resptime_avg} , ${total_weberror_avg} , ${ci_throughput} , ${ci_responsetime}" >> ${RESULTS_DIR_J}/../Metrics-wrk.log
 }
 
@@ -144,5 +148,13 @@ WARMUPS=$4
 MEASURES=$5
 NAMESPACE=$6
 SCRIPT_REPO=$7
+CLUSTER_TYPE=$8
+APP_NAME=$9
 
-parseResults ${TOTAL_ITR} ${RESULTS_SC} ${SCALE} ${WARMUPS} ${MEASURES} ${NAMESPACE} ${SCRIPT_REPO}
+if [[ ${CLUSTER_TYPE} == "openshift" ]]; then
+        K_EXEC="oc"
+elif [[ ${CLUSTER_TYPE} == "minikube" ]]; then
+        K_EXEC="kubectl"
+fi
+
+parseResults ${TOTAL_ITR} ${RESULTS_SC} ${SCALE} ${WARMUPS} ${MEASURES} ${NAMESPACE} ${SCRIPT_REPO} ${CLUSTER_TYPE} ${APP_NAME}

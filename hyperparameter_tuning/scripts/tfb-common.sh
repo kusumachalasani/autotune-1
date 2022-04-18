@@ -21,14 +21,17 @@ pushd "${CURRENT_DIR}" > /dev/null
 pushd ".." > /dev/null
 
 # Set the defaults for the app
-export TFB_PORT="32000"
 export NETWORK="kruize-network"
 LOGFILE="${PWD}/setup.log"
 TFB_REPO="${CURRENT_DIR}"
 TFB_DEFAULT_IMAGE="kruize/tfb-qrh:1.13.2.F_mm.v1"
-TFB_CUSTOM_IMAGE="tfb-qrh:latest"
 DEFAULT_NAMESPACE="default"
+DEFAULT_DB_TYPE="docker"
 MANIFESTS_DIR="manifests/"
+HYPERFOIL_VERSION="0.16"
+HYPERFOIL_DIR="${PWD}/hyperfoil-${HYPERFOIL_VERSION}/bin"
+APP_NAME="tfb-qrh"
+APP_DB="tfb-database"
 
 # checks if the previous command is executed successfully
 # input:Return value of previous command
@@ -84,22 +87,22 @@ function get_ip() {
 # output: Returns 1 if the application is running else returns 0
 function check_app() {
 	if [ "${CLUSTER_TYPE}" == "openshift" ]; then
-		CMD=$(oc get pods --namespace=${NAMESPACE} | grep "tfb-qrh" | grep "Running" | cut -d " " -f1)
+		K_EXEC="oc"
+	elif [ "${CLUSTER_TYPE}" == "minikube" ]; then
+                K_EXEC="kubectl"
 	fi
-	for status in "${CMD[@]}"
-	do
-		if [ -z "${status}" ]; then
-			#echo "Application pod did not come up"
-			# Wait for 60sec more and check again before exiting
-			sleep 60
-			CMD=$(oc get pods --namespace=${NAMESPACE} | grep "tfb-qrh" | grep "Running" | cut -d " " -f1)
-			status1=${CMD[@]}
-			if [ -z "${status1}" ]; then
-				echo "Application pod did not come up"
-				exit -1;
-			fi
-		fi
-	done
+	CMD=$(${K_EXEC} get pods --namespace=${NAMESPACE} | grep "${APP_NAME}" | grep "Running" | cut -d " " -f1)
+        for status in "${CMD[@]}"
+        do
+                if [ -z "${status}" ]; then
+                        echo "Application pod did not come up" >> ${LOGFILE}
+                        ${K_EXEC} get pods -n ${NAMESPACE} >> ${LOGFILE}
+                        ${K_EXEC} get events -n ${NAMESPACE} >> ${LOGFILE}
+                        ${K_EXEC} logs pod/`${K_EXEC} get pods | grep "${APP_NAME}" | cut -d " " -f1` -n ${NAMESPACE} >> ${LOGFILE}
+                        echo "The run failed. See setup.log for more details"
+                        exit -1;
+                fi
+        done
 }
 
 # Parse the Throughput Results
@@ -113,9 +116,9 @@ function parse_tfb_results() {
 	do
 		RESULT_LOG=${RESULTS_DIR}/wrk-${inst}-${iteration}.log
 		throughput=`cat ${RESULT_LOG} | grep "Requests" | cut -d ":" -f2 `
-		responsetime=`cat ${RESULT_LOG} | grep "Latency" | cut -d ":" -f2 | tr -s " " | cut -d " " -f2 `
-		max_responsetime=`cat ${RESULT_LOG} | grep "Latency" | cut -d ":" -f2 | tr -s " " | cut -d " " -f6 `
-		stddev_responsetime=`cat ${RESULT_LOG} | grep "Latency" | cut -d ":" -f2 | tr -s " " | cut -d " " -f4 `
+		responsetime=`cat ${RESULT_LOG} | grep "Latency:" | cut -d ":" -f2 | tr -s " " | cut -d " " -f2 `
+		max_responsetime=`cat ${RESULT_LOG} | grep "Latency:" | cut -d ":" -f2 | tr -s " " | cut -d " " -f6 `
+		stddev_responsetime=`cat ${RESULT_LOG} | grep "Latency:" | cut -d ":" -f2 | tr -s " " | cut -d " " -f4 `
 		weberrors=`cat ${RESULT_LOG} | grep "Non-2xx" | cut -d ":" -f2`
 		if [ "${weberrors}" == "" ]; then
 			weberrors="0"
@@ -127,9 +130,58 @@ function parse_tfb_results() {
 # Download the required dependencies
 # output: Check if the hyperfoil/wrk dependencies is already present, If not download the required dependencies to apply the load
 function load_setup(){
-	if [ ! -d "${PWD}/hyperfoil-0.13" ]; then
-		wget https://github.com/Hyperfoil/Hyperfoil/releases/download/release-0.13/hyperfoil-0.13.zip >> ${LOGFILE} 2>&1
-		unzip hyperfoil-0.13.zip 
+	if [ ! -d "${PWD}/hyperfoil-${HYPERFOIL_VERSION}" ]; then
+		wget https://github.com/Hyperfoil/Hyperfoil/releases/download/release-${HYPERFOIL_VERSION}/hyperfoil-${HYPERFOIL_VERSION}.zip >> ${LOGFILE} 2>&1
+		unzip hyperfoil-${HYPERFOIL_VERSION}.zip 
 	fi
-	pushd hyperfoil-0.13/bin > /dev/null
+	pushd hyperfoil-${HYPERFOIL_VERSION}/bin > /dev/null
+}
+
+# Start/Stop the minikube
+function reload_minikube(){
+	cpus=$1
+	memory=$2
+	is_running=`minikube status | grep "host" | cut -d ":" -f2`
+	if [[ ${is_running} == *"Running"* ]]; then
+		minikube stop
+		err_exit "Error: Unable to stop the minikube."
+	fi
+	minikube delete
+	echo "starting with --cpus ${cpus} --memory ${memory}"
+	minikube start --driver=kvm2 --cpus ${cpus} --memory ${memory}
+	err_exit "Unable to start minikube with ${cpus} cpus and ${memory} memory"
+}
+
+## Forward the prometheus port to collect the metrics
+function fwd_prometheus_port_minikube() {
+	kubectl port-forward pod/prometheus-k8s-0 9090:9090 -n monitoring >> ${LOGFILE} 2>&1 &
+}
+
+## Create json output to support HPO wrapper
+function createoutputcsv() {
+	   "deployment_name": row[DEPLOYMENT_NAME],
+            "namespace": row[NAMESPACE],
+                "image_name": row[IMAGE_NAME],
+                "container_name": row[CONTAINER_NAME],
+                            "score": row[CPU_MEAN],
+                            "mean": row[CPU_MEAN],
+                            "min": row[CPU_MIN],
+                            "max": row[CPU_MAX]
+                            "score" : row[MEM_MEAN],
+                            "mean" : row[MEM_MEAN],
+                            "min" : row[MEM_MIN],
+                            "max" : row[MEM_MAX]
+                        "score": row[RQSUM_MEAN],
+                        "mean" : row[RQSUM_MEAN],
+                        "max" : row[RQSUM_MAX]
+                        "50p": row[RQ_50p],
+                        "95p": row[RQ_95p],
+                        "97p": row[RQ_97p],
+                        "99p": row[RQ_99p],
+                        "99.9p": row[RQ_99.9p],
+                        "99.99p": row[RQ_99.99p],
+                        "99.999p": row[RQ_99.999p],
+                        "100p": row[RQ_100p]
+                        "score": row[RQC_MEAN],
+                        "score": row[RQ_MAX]
 }
