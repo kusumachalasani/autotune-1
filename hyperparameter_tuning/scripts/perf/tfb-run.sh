@@ -507,7 +507,7 @@ fi
 for (( scale=1; scale<=${TOTAL_INST}; scale++ ))
 do
 	RESULTS_SC=${RESULTS_DIR_ROOT}/scale_${scale}
-	echo "Run in progress..."
+	echo "Run in progress..." >> ${LOGFILE}
 	echo "***************************************" >> ${LOGFILE}
 	echo "Run logs are placed at... " ${RESULTS_DIR_ROOT} >> ${LOGFILE}
 	echo "***************************************" >> ${LOGFILE}
