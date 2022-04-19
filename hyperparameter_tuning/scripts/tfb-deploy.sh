@@ -271,7 +271,8 @@ function createInstances() {
 
 		user_options=$(echo ${OPTIONS_VAR} | tr ";" "\n")
 
-		OPTIONS_VAR=""
+		#OPTIONS_VAR=""
+		OPTIONS_VAR="-server -XX:+UseG1GC -XX:MaxRAMPercentage=70"
 		for useroption in ${user_options}
 		do
 			OPTIONS_VAR="${OPTIONS_VAR} ${useroption}"
@@ -292,6 +293,10 @@ function createInstances() {
                 do
                         if [ ! -z ${!jvtunable} ]; then
 				OPTIONS_VAR="${OPTIONS_VAR} -XX:${jvtunable}=${!jvtunable}"
+				## Set ConGCThreads same as ParallelGCThreads to avoid errors
+				if [ ${jvtunable} == "ConcGCThreads" ]; then
+					OPTIONS_VAR="${OPTIONS_VAR} -XX:ParallelGCThreads=${!jvtunable}"
+				fi
                         fi
                 done
 		
@@ -303,8 +308,8 @@ function createInstances() {
 				elif [ ${qtunable} == "quarkustpqueuesize" ]; then
                                         OPTIONS_VAR="${OPTIONS_VAR} -Dquarkus.thread-pool.queue-size=${!qtunable}"
 				elif [ ${qtunable} == "quarkusdatasourcejdbcminsize" ]; then
-                                        OPTIONS_VAR="${OPTIONS_VAR} -Dquarkus.datasource.jdbc.min-size=${!qtunable}"
-				elif [ ${qtunable} == "quarkusdatasourcejdbcmaxsize" ]; then
+					OPTIONS_VAR="${OPTIONS_VAR} -Dquarkus.datasource.jdbc.min-size=${!qtunable} -Dquarkus.datasource.jdbc.initial-size=${!qtunable}"
+                              	elif [ ${qtunable} == "quarkusdatasourcejdbcmaxsize" ]; then
                                         OPTIONS_VAR="${OPTIONS_VAR} -Dquarkus.datasource.jdbc.max-size=${!qtunable}"
 				fi
                         fi
