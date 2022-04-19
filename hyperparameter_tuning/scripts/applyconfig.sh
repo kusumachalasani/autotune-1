@@ -35,4 +35,4 @@ UseTypeSpeculation=${31}
 # sleep 30
 
 ## Run the baseline
-./scripts/perf/run-tfb-qrh-openshift.sh -s ${BENCHMARK_SERVER} -e ${RESULTS_DIR} -r -d ${DURATION} -w ${WARMUPS} -m ${MEASURES} -i ${SERVER_INSTANCES} --iter=${ITERATIONS} -n ${NAMESPACE} -t ${THREADS} -R ${RATE} --connection=${CONNECTION} --cpureq=4 --memreq=4096M --cpulim=4 --memlim=4096M
+./scripts/perf/tfb-run.sh --clustertype="openshift" -s ${BENCHMARK_SERVER} -e ${RESULTS_DIR} --dbtype=standalone --dbhost="10.1.45.55:5432" -r -d ${DURATION} -w ${WARMUPS} -m ${MEASURES} -i ${SERVER_INSTANCES} --iter=${ITERATIONS} -n ${NAMESPACE} -t ${THREADS} -R ${RATE} --connection=${CONNECTION} --cpureq=4 --memreq=4096M --cpulim=4 --memlim=4096M
