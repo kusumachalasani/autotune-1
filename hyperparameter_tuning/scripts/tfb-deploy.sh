@@ -184,6 +184,9 @@ do
                         UseTypeSpeculation=*)
                                 UseTypeSpeculation=${OPTARG#*=}
                                 ;;
+			gcpolicy=*)
+				gcpolicy=${OPTARG#*=}
+				;;
 			*)
 		esac
 		;;
@@ -271,12 +274,17 @@ function createInstances() {
 
 		user_options=$(echo ${OPTIONS_VAR} | tr ";" "\n")
 
-		#OPTIONS_VAR=""
-		OPTIONS_VAR="-server -XX:+UseG1GC -XX:MaxRAMPercentage=70"
+		OPTIONS_VAR=""
+		#OPTIONS_VAR="-server -XX:+UseG1GC -XX:MaxRAMPercentage=70"
 		for useroption in ${user_options}
 		do
 			OPTIONS_VAR="${OPTIONS_VAR} ${useroption}"
 		done
+
+		## Specific to GC policy
+		if [[ -z ${gcpolicy} ]]; then
+			OPTIONS_VAR="${OPTIONS_VAR} -XX:+${gcpolicy}"
+		fi
 
 		for btunable in "${tunables_jvm_boolean[@]}"
                 do
