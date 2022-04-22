@@ -39,7 +39,7 @@ def get_all_tunables():
     search_space_json = '{"id": "auto123", "application_name": "tfb-qrh-deployment-6d4c8678d4-jmz8x", ' \
                         '"objective_function": "transaction_response_time", "value_type": "double", "direction": ' \
                         '"maximize", "hpo_algo_impl": "optuna_tpe", "tunables": [{"name": "cpuRequest", "value_type": ' \
-                        '"double", "upper_bound": 4, "lower_bound": 1, "step": 0.01}, {"name": "memoryRequest", ' \
+                        '"double", "upper_bound": 8, "lower_bound": 1, "step": 0.1}, {"name": "memoryRequest", ' \
                         '"value_type": "integer", "upper_bound": 4096, "lower_bound": 270, "step": 1} , {"name": "gcpolicy", ' \
                         '"value_type": "categorical", "choices": ["UseG1GC", "UseParallelGC", "UseSerialGC", "UseShenandoahGC", "UseZGC"]}]} '
 
