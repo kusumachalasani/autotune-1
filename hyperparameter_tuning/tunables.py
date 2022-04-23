@@ -41,7 +41,7 @@ def get_all_tunables():
                         '"maximize", "hpo_algo_impl": "optuna_tpe", "tunables": [{"name": "cpuRequest", "value_type": ' \
                         '"double", "upper_bound": 8, "lower_bound": 1, "step": 0.1}, {"name": "memoryRequest", ' \
                         '"value_type": "integer", "upper_bound": 4096, "lower_bound": 270, "step": 1} , {"name": "gcpolicy", ' \
-                        '"value_type": "categorical", "choices": ["UseG1GC", "UseParallelGC", "UseSerialGC", "UseZGC"]}]} '
+                        '"value_type": "categorical", "choices": ["UseG1GC", "UseParallelGC", "UseSerialGC", "UseShenandoahGC", "UseZGC"]}]} '
 
     search_space = json.loads(search_space_json)
     id = search_space["id"]
