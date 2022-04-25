@@ -185,19 +185,14 @@ def perform_experiment(experiment_tunables):
         file.close()
         file = open('output.txt', 'a')
         rows = output.split("\n")
-        data = rows[3]
-        """
-        data:
-        1 ,  338.3 , 765 , 0 , 0 , 0 , 0 , 0 , 0 ,  60.2367 , 21.4259 , 3.3294886353000983 , 410.36017895925215M , 0
-        """
-        file.write(data + "\n")
-        thrpt = data.split(" , ")[1]
-        rsp = data.split(" , ")[2]
-        maxrsp = data.split(" , ")[3]
-        thrpt_ci = data.split(" , ")[15]
-        rsp_ci = data.split(" , ")[16]
-        
         try:
+            data = rows[3]
+            file.write(data + "\n")
+            thrpt = data.split(" , ")[1]
+            rsp = data.split(" , ")[2]
+            maxrsp = data.split(" , ")[3]
+            thrpt_ci = data.split(" , ")[15]
+            rsp_ci = data.split(" , ")[16]
             float(thrpt)
             experiment_status = "success"
             sla = (100 * ( 125 * float(thrpt) ) ) / ( 150 * float(rsp) ) / ( (25 * float(maxrsp) )/100 ) 
