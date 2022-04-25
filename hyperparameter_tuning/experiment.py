@@ -196,7 +196,7 @@ def perform_experiment(experiment_tunables):
             float(thrpt)
             experiment_status = "success"
             sla = (100 * ( 125 * float(thrpt) ) ) / ( 150 * float(rsp) ) / ( (25 * float(maxrsp) )/100 ) 
-        except ValueError:
+        except:
             experiment_status = "prune"
             sla = 0
         
