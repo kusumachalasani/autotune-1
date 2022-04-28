@@ -125,7 +125,7 @@ def get_experiment_result(experiment_tunables):
 
 #    output = subprocess.run(["bash", "scripts/applyconfig.sh", str(cpu_request), str(memory_request), str(quarkusthreadpoolcorethreads), str(quarkusthreadpoolqueuesize), str(quarkusdatasourcejdbcminsize), str(quarkusdatasourcejdbcmaxsize), str(FreqInlineSize), str(MaxInlineLevel), str(MinInliningThreshold), str(CompileThreshold), str(CompileThresholdScaling), str(ConcGCThreads), str(InlineSmallCode), str(LoopUnrollLimit), str(LoopUnrollMin), str(MinSurvivorRatio), str(NewRatio), str(TieredStopAtLevel), str(TieredCompilation), str(AllowParallelDefineClass), str(AllowVectorizeOnDemand), str(AlwaysCompileLoopMethods), str(AlwaysPreTouch), str(AlwaysTenure), str(BackgroundCompilation), str(DoEscapeAnalysis), str(UseInlineCaches), str(UseLoopPredicate), str(UseStringDeduplication), str(UseSuperWord), str(UseTypeSpeculation)],
 #                            stdout=subprocess.PIPE).stdout.decode('utf-8')
-    output = subprocess.run(["bash", "scripts/applyconfig.sh", "4", "8192", str(gcpolicy)],
+    output = subprocess.run(["bash", "scripts/applyconfig.sh", "1", "8192", str(gcpolicy)],
                             stdout=subprocess.PIPE).stdout.decode('utf-8')
     return output
 
