@@ -185,8 +185,17 @@ do
                                 UseTypeSpeculation=${OPTARG#*=}
                                 ;;
 			gcpolicy=*)
-				gcpolicy=${OPTARG#*=}
-				;;
+                                gcpolicy=${OPTARG#*=}
+                                ;;
+                        StackTraceInThrowable=*)
+                                StackTraceInThrowable=${OPTARG#*=}
+                                ;;
+                        checkBounds=*)
+                                checkBounds=${OPTARG#*=}
+                                ;;
+                        httpiothreads=*)
+                                httpiothreads=${OPTARG#*=}
+                                ;;
 			*)
 		esac
 		;;
@@ -268,21 +277,22 @@ function createInstances() {
 			sed -i '/limits:/a \ \ \ \ \ \ \ \ \ \ cpu: '${CPU_LIM}'' ${MANIFESTS_DIR}/quarkus-resteasy-hibernate-${inst}.yaml
 		fi
 
-		tunables_jvm_boolean=(TieredCompilation AllowParallelDefineClass AllowVectorizeOnDemand AlwaysCompileLoopMethods AlwaysPreTouch AlwaysTenure BackgroundCompilation DoEscapeAnalysis UseInlineCaches UseLoopPredicate UseStringDeduplication UseSuperWord UseTypeSpeculation)
+		tunables_jvm_boolean=(TieredCompilation AllowParallelDefineClass AllowVectorizeOnDemand AlwaysCompileLoopMethods AlwaysPreTouch AlwaysTenure BackgroundCompilation DoEscapeAnalysis UseInlineCaches UseLoopPredicate UseStringDeduplication UseSuperWord UseTypeSpeculation StackTraceInThrowable)
 		tunables_jvm_values=(FreqInlineSize MaxInlineLevel MinInliningThreshold CompileThreshold CompileThresholdScaling ConcGCThreads InlineSmallCode LoopUnrollLimit LoopUnrollMin MinSurvivorRatio NewRatio TieredStopAtLevel)
-		tunables_quarkus=(quarkustpcorethreads quarkustpqueuesize quarkusdatasourcejdbcminsize quarkusdatasourcejdbcmaxsize)
+		tunables_quarkus=(quarkustpcorethreads quarkustpqueuesize quarkusdatasourcejdbcminsize quarkusdatasourcejdbcmaxsize httpiothreads)
+		tunables_system=(checkBounds)
 
 		user_options=$(echo ${OPTIONS_VAR} | tr ";" "\n")
 
+#		OPTIONS_VAR=""
 		OPTIONS_VAR="-server -XX:MaxRAMPercentage=70"
-		#OPTIONS_VAR="-server -XX:+UseG1GC -XX:MaxRAMPercentage=70"
 		for useroption in ${user_options}
 		do
 			OPTIONS_VAR="${OPTIONS_VAR} ${useroption}"
 		done
 
 		## Specific to GC policy
-		if [[ ! -z ${gcpolicy} ]]; then
+		if [[ -z ${gcpolicy} ]]; then
 			OPTIONS_VAR="${OPTIONS_VAR} -XX:+${gcpolicy}"
 		fi
 
@@ -316,13 +326,24 @@ function createInstances() {
 				elif [ ${qtunable} == "quarkustpqueuesize" ]; then
                                         OPTIONS_VAR="${OPTIONS_VAR} -Dquarkus.thread-pool.queue-size=${!qtunable}"
 				elif [ ${qtunable} == "quarkusdatasourcejdbcminsize" ]; then
-					OPTIONS_VAR="${OPTIONS_VAR} -Dquarkus.datasource.jdbc.min-size=${!qtunable} -Dquarkus.datasource.jdbc.initial-size=${!qtunable}"
-                              	elif [ ${qtunable} == "quarkusdatasourcejdbcmaxsize" ]; then
+                                        OPTIONS_VAR="${OPTIONS_VAR} -Dquarkus.datasource.jdbc.min-size=${!qtunable}"
+				elif [ ${qtunable} == "quarkusdatasourcejdbcmaxsize" ]; then
                                         OPTIONS_VAR="${OPTIONS_VAR} -Dquarkus.datasource.jdbc.max-size=${!qtunable}"
+				elif [ ${qtunable} == "httpiothreads" ]; then
+                                        OPTIONS_VAR="${OPTIONS_VAR} -Dquarkus.http.io-threads=${!qtunable}"
 				fi
                         fi
 
                 done
+
+		for systunable in "${tunables_system[@]}"
+		do
+			if [ ! -z ${!systunable} ]; then
+				if [ ${systunable} == "checkBounds" ]; then
+					OPTIONS_VAR="${OPTIONS_VAR} -Dio.netty.buffer.checkBounds=${!systunable} -Dio.netty.buffer.checkAccessible=${!systunable}"
+			fi
+		done
+
 		if [ ! -z  "${OPTIONS_VAR}" ]; then
 			sed -i "s/\"-server\"/\"${OPTIONS_VAR}\"/" ${MANIFESTS_DIR}/quarkus-resteasy-hibernate-${inst}.yaml
 		fi

@@ -120,12 +120,18 @@ def get_experiment_result(experiment_tunables):
             UseTypeSpeculation = tunable["tunable_value"]
         elif tunable["tunable_name"] == "gcpolicy":
             gcpolicy = tunable["tunable_value"]
+	elif tunable["tunable_name"] == "StackTraceInThrowable":
+	    StackTraceInThrowable = tunable["tunable_value"]
+	elif tunable["tunable_name"] == "checkBounds":
+	    checkBounds = tunable["tunable_value"]
+	elif tunable["tunable_name"] == "httpiothreads":
+	    httpiothreads = tunable["tunable_value"]
 
 #    output = subprocess.run(["bash", "scripts/applyconfig.sh", str(cpu_request), str(memory_request)], stdout=subprocess.PIPE).stdout.decode('utf-8')
 
-#    output = subprocess.run(["bash", "scripts/applyconfig.sh", str(cpu_request), str(memory_request), str(quarkusthreadpoolcorethreads), str(quarkusthreadpoolqueuesize), str(quarkusdatasourcejdbcminsize), str(quarkusdatasourcejdbcmaxsize), str(FreqInlineSize), str(MaxInlineLevel), str(MinInliningThreshold), str(CompileThreshold), str(CompileThresholdScaling), str(ConcGCThreads), str(InlineSmallCode), str(LoopUnrollLimit), str(LoopUnrollMin), str(MinSurvivorRatio), str(NewRatio), str(TieredStopAtLevel), str(TieredCompilation), str(AllowParallelDefineClass), str(AllowVectorizeOnDemand), str(AlwaysCompileLoopMethods), str(AlwaysPreTouch), str(AlwaysTenure), str(BackgroundCompilation), str(DoEscapeAnalysis), str(UseInlineCaches), str(UseLoopPredicate), str(UseStringDeduplication), str(UseSuperWord), str(UseTypeSpeculation)],
+    output = subprocess.run(["bash", "scripts/applyconfig.sh", 4, 4096, str(gcpolicy), str(quarkusthreadpoolcorethreads), str(quarkusthreadpoolqueuesize), str(quarkusdatasourcejdbcminsize), str(quarkusdatasourcejdbcmaxsize), str(FreqInlineSize), str(MaxInlineLevel), str(MinInliningThreshold), str(CompileThreshold), str(CompileThresholdScaling), str(ConcGCThreads), str(InlineSmallCode), str(LoopUnrollLimit), str(LoopUnrollMin), str(MinSurvivorRatio), str(NewRatio), str(TieredStopAtLevel), str(TieredCompilation), str(AllowParallelDefineClass), str(AllowVectorizeOnDemand), str(AlwaysCompileLoopMethods), str(AlwaysPreTouch), str(AlwaysTenure), str(BackgroundCompilation), str(DoEscapeAnalysis), str(UseInlineCaches), str(UseLoopPredicate), str(UseStringDeduplication), str(UseSuperWord), str(UseTypeSpeculation), str(StackTraceInThrowable), str(checkBounds), str(httpiothreads)],
 #                            stdout=subprocess.PIPE).stdout.decode('utf-8')
-    output = subprocess.run(["bash", "scripts/applyconfig.sh", "1", "8192", str(gcpolicy)],
+#    output = subprocess.run(["bash", "scripts/applyconfig.sh", "1", "8192", str(gcpolicy)],
                             stdout=subprocess.PIPE).stdout.decode('utf-8')
     return output
 
@@ -188,14 +194,15 @@ def perform_experiment(experiment_tunables):
         try:
             data = rows[3]
             file.write(data + "\n")
-            thrpt = data.split(" , ")[1]
-            rsp = data.split(" , ")[2]
-            maxrsp = data.split(" , ")[3]
-            thrpt_ci = data.split(" , ")[15]
-            rsp_ci = data.split(" , ")[16]
+            thrpt = data.split(" , ")[0]
+          #  rsp = data.split(" , ")[2]
+          #  maxrsp = data.split(" , ")[3]
+          #  thrpt_ci = data.split(" , ")[15]
+          #  rsp_ci = data.split(" , ")[16]
             float(thrpt)
             experiment_status = "success"
-            sla = (100 * ( 125 * float(thrpt) ) ) / ( 150 * float(rsp) ) / ( (25 * float(maxrsp) )/100 ) 
+          #  sla = (100 * ( 125 * float(thrpt) ) ) / ( 150 * float(rsp) ) / ( (25 * float(maxrsp) )/100 ) 
+	    sla = float(thrpt)
         except:
             experiment_status = "prune"
             sla = 0
