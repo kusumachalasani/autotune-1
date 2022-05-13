@@ -341,6 +341,7 @@ function createInstances() {
 			if [ ! -z ${!systunable} ]; then
 				if [ ${systunable} == "checkBounds" ]; then
 					OPTIONS_VAR="${OPTIONS_VAR} -Dio.netty.buffer.checkBounds=${!systunable} -Dio.netty.buffer.checkAccessible=${!systunable}"
+				fi
 			fi
 		done
 
