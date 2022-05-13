@@ -120,12 +120,12 @@ def get_experiment_result(experiment_tunables):
             UseTypeSpeculation = tunable["tunable_value"]
         elif tunable["tunable_name"] == "gcpolicy":
             gcpolicy = tunable["tunable_value"]
-	elif tunable["tunable_name"] == "StackTraceInThrowable":
-	    StackTraceInThrowable = tunable["tunable_value"]
-	elif tunable["tunable_name"] == "checkBounds":
-	    checkBounds = tunable["tunable_value"]
-	elif tunable["tunable_name"] == "httpiothreads":
-	    httpiothreads = tunable["tunable_value"]
+        elif tunable["tunable_name"] == "StackTraceInThrowable":
+            StackTraceInThrowable = tunable["tunable_value"]
+        elif tunable["tunable_name"] == "checkBounds":
+            checkBounds = tunable["tunable_value"]
+        elif tunable["tunable_name"] == "httpiothreads":
+            httpiothreads = tunable["tunable_value"]
 
 #    output = subprocess.run(["bash", "scripts/applyconfig.sh", str(cpu_request), str(memory_request)], stdout=subprocess.PIPE).stdout.decode('utf-8')
 
