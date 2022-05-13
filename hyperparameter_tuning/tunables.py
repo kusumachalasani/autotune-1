@@ -43,7 +43,7 @@ def get_all_tunables():
                         '"objective_function": "transaction_response_time", "value_type": "double", "direction": ' \
                         '"maximize", "hpo_algo_impl": "optuna_tpe", "tunables": [ {"name": "gcpolicy", ' \
                         '"value_type": "categorical", "choices": ["UseG1GC", "UseParallelGC", "UseSerialGC", "UseShenandoahGC", "UseZGC"]}, {"name": "quarkusthreadpoolcorethreads", ' \
-                        '"value_type": "integer", "upper_bound": 32, "lower_bound": 1, "step": 4}, {"name": "quarkusthreadpoolqueuesize", ' \
+                        '"value_type": "integer", "upper_bound": 33, "lower_bound": 1, "step": 4}, {"name": "quarkusthreadpoolqueuesize", ' \
                         '"value_type": "integer", "upper_bound": 10000, "lower_bound": 0, "step": 10}, {"name": "quarkusdatasourcejdbcminsize", ' \
                         '"value_type": "integer", "upper_bound": 12, "lower_bound": 1, "step": 1}, {"name": "quarkusdatasourcejdbcmaxsize", ' \
                         '"value_type": "integer", "upper_bound": 90, "lower_bound": 12, "step": 1}, {"name": "FreqInlineSize", ' \
