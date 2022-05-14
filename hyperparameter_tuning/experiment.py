@@ -192,7 +192,7 @@ def perform_experiment(experiment_tunables):
         file = open('output.txt', 'a')
         rows = output.split("\n")
         try:
-            data = rows[3]
+            data = rows[4]
             file.write(data + "\n")
             thrpt = data.split(" , ")[0]
           #  rsp = data.split(" , ")[2]
