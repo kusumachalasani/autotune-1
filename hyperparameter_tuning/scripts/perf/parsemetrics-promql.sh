@@ -142,15 +142,7 @@ function parsePodMicroMeterLog()
 		if [ ${MODE} == "app_timer_count" ] || [ ${MODE} == "app_timer_sum" ] || [ ${MODE} == "server_requests_count" ] || [ ${MODE} == "server_requests_sum" ]; then
                         if [ -s "${RESULTS_DIR_P}/${MODE}-${TYPE}-0-${ENDPOINT}.json" ]; then
                                 cat ${RESULTS_DIR_P}/${MODE}-${TYPE}*-${ENDPOINT}.json | cut -d ";" -f4 | cut -d '"' -f1 | uniq | grep -v "^$" | sort -n  > ${RESULTS_DIR_P}/temp-data.log
-				total_lines=`cat ${RESULTS_DIR_P}/temp-data.log | wc -l`
-				### Avoiding 1st value from the log as it comes from previous runs.	
-				if [[ ${TYPE} == "warmup" ]] && [[ ${ITR} == 0 ]]; then
-	                                start_counter=`cat ${RESULTS_DIR_P}/temp-data.log | head -1`
-				elif [[ ${total_lines} -lt 3 ]]; then
-					start_counter=`cat ${RESULTS_DIR_P}/temp-data.log | head -1`
-				else
-					start_counter=`cat ${RESULTS_DIR_P}/temp-data.log | head -2 | tail -1`
-				fi
+				start_counter=`cat ${RESULTS_DIR_P}/temp-data.log | head -1`
                                 end_counter=`cat ${RESULTS_DIR_P}/temp-data.log | tail -1`
                                 counter_val=$(echo ${end_counter}-${start_counter}| bc -l)
                                 echo "${counter_val}" > ${RESULTS_DIR_J}/${MODE}-${TYPE}-${ITR}-${ENDPOINT}.log
@@ -432,32 +424,35 @@ else
 	composite_throughput=0
 fi
 
-echo "${SCALE} , ${composite_throughput} , ${total_server_requests_thrpt_rate_db_avg} , ${total_server_requests_rsp_time_rate_db_avg} , ${total_server_requests_ms_max_db} , ${total_http_ms_quan_50_histo_avg} , ${total_http_ms_quan_95_histo_avg} , ${total_http_ms_quan_97_histo_avg} , ${total_http_ms_quan_99_histo_avg} , ${total_http_ms_quan_999_histo_avg} , ${total_http_ms_quan_9999_histo_avg} , ${total_http_ms_quan_99999_histo_avg} , ${total_http_ms_quan_100_histo_avg} , ${total_cpu_avg} , ${total_mem_avg} , ${total_cpu_min} , ${total_cpu_max} , ${total_mem_min} , ${total_mem_max} , ${ci_server_requests_thrpt_rate_3m} , ${ci_server_requests_rsp_time_rate_3m} " >> ${RESULTS_DIR_J}/../Metrics-prom.log
+echo "${composite_throughput} , " >> ${RESULTS_DIR_J}/../Metrics-composite-prom.log
+echo "${total_cpu_avg} , ${total_mem_avg} , ${total_cpu_min} , ${total_cpu_max} , ${total_mem_min} , ${total_mem_max} , " >> ${RESULTS_DIR_J}/../Metrics-cpumem-prom.log
 
-echo " ${total_server_requests_thrpt_db_avg} , ${total_server_requests_rsp_time_db_avg} , ${total_server_requests_ms_max_db} , ${ci_server_requests_thrpt_db} , ${ci_server_requests_rsp_time_db}" >> ${RESULTS_DIR_J}/../Metrics-db-prom.log
+#echo "${SCALE} , ${composite_throughput} , ${total_server_requests_thrpt_rate_db_avg} , ${total_server_requests_rsp_time_rate_db_avg} , ${total_server_requests_ms_max_db} , ${total_http_ms_quan_50_histo_avg} , ${total_http_ms_quan_95_histo_avg} , ${total_http_ms_quan_97_histo_avg} , ${total_http_ms_quan_99_histo_avg} , ${total_http_ms_quan_999_histo_avg} , ${total_http_ms_quan_9999_histo_avg} , ${total_http_ms_quan_99999_histo_avg} , ${total_http_ms_quan_100_histo_avg} , ${total_cpu_avg} , ${total_mem_avg} , ${total_cpu_min} , ${total_cpu_max} , ${total_mem_min} , ${total_mem_max} , ${ci_server_requests_thrpt_rate_3m} , ${ci_server_requests_rsp_time_rate_3m} , " >> ${RESULTS_DIR_J}/../Metrics-prom.log
 
-echo " ${total_server_requests_thrpt_json_avg} , ${total_server_requests_rsp_time_json_avg} , ${total_server_requests_ms_max_json} , ${ci_server_requests_thrpt_json} , ${ci_server_requests_rsp_time_json}" >> ${RESULTS_DIR_J}/../Metrics-json-prom.log
+echo "${total_server_requests_thrpt_db_avg} , ${total_server_requests_rsp_time_db_avg} , ${total_server_requests_ms_max_db} , ${ci_server_requests_thrpt_db} , ${ci_server_requests_rsp_time_db} , " >> ${RESULTS_DIR_J}/../Metrics-db-prom.log
 
-echo " ${total_server_requests_thrpt_fortunes_avg} , ${total_server_requests_rsp_time_fortunes_avg} , ${total_server_requests_ms_max_fortunes} , ${ci_server_requests_thrpt_fortunes} , ${ci_server_requests_rsp_time_fortunes}" >> ${RESULTS_DIR_J}/../Metrics-fortunes-prom.log
+echo "${total_server_requests_thrpt_json_avg} , ${total_server_requests_rsp_time_json_avg} , ${total_server_requests_ms_max_json} , ${ci_server_requests_thrpt_json} , ${ci_server_requests_rsp_time_json} , " >> ${RESULTS_DIR_J}/../Metrics-json-prom.log
 
-echo " ${total_server_requests_thrpt_queries_avg} , ${total_server_requests_rsp_time_queries_avg} , ${total_server_requests_ms_max_queries} , ${ci_server_requests_thrpt_queries} , ${ci_server_requests_rsp_time_queries}" >> ${RESULTS_DIR_J}/../Metrics-queries-prom.log
+echo "${total_server_requests_thrpt_fortunes_avg} , ${total_server_requests_rsp_time_fortunes_avg} , ${total_server_requests_ms_max_fortunes} , ${ci_server_requests_thrpt_fortunes} , ${ci_server_requests_rsp_time_fortunes} , " >> ${RESULTS_DIR_J}/../Metrics-fortunes-prom.log
 
-echo " ${total_server_requests_thrpt_plaintext_avg} , ${total_server_requests_rsp_time_plaintext_avg} , ${total_server_requests_ms_max_plaintext} , ${ci_server_requests_thrpt_plaintext} , ${ci_server_requests_rsp_time_plaintext}" >> ${RESULTS_DIR_J}/../Metrics-plaintext-prom.log
+echo "${total_server_requests_thrpt_queries_avg} , ${total_server_requests_rsp_time_queries_avg} , ${total_server_requests_ms_max_queries} , ${ci_server_requests_thrpt_queries} , ${ci_server_requests_rsp_time_queries} , " >> ${RESULTS_DIR_J}/../Metrics-queries-prom.log
 
-echo " ${total_server_requests_thrpt_updates_avg} , ${total_server_requests_rsp_time_updates_avg} , ${total_server_requests_ms_max_updates} , ${ci_server_requests_thrpt_updates} , ${ci_server_requests_rsp_time_updates}" >> ${RESULTS_DIR_J}/../Metrics-updates-prom.log
+echo "${total_server_requests_thrpt_plaintext_avg} , ${total_server_requests_rsp_time_plaintext_avg} , ${total_server_requests_ms_max_plaintext} , ${ci_server_requests_thrpt_plaintext} , ${ci_server_requests_rsp_time_plaintext} , " >> ${RESULTS_DIR_J}/../Metrics-plaintext-prom.log
+
+echo "${total_server_requests_thrpt_updates_avg} , ${total_server_requests_rsp_time_updates_avg} , ${total_server_requests_ms_max_updates} , ${ci_server_requests_thrpt_updates} , ${ci_server_requests_rsp_time_updates} , " >> ${RESULTS_DIR_J}/../Metrics-updates-prom.log
 
         echo "${SCALE} ,  ${total_mem_avg} , ${total_memusage_avg} " >> ${RESULTS_DIR_J}/../Metrics-mem-prom.log
         echo "${SCALE} ,  ${total_cpu_avg} " >> ${RESULTS_DIR_J}/../Metrics-cpu-prom.log
 #       echo "${SCALE} , ${total_c_cpu_avg} , ${total_c_cpurequests_avg} , ${total_c_cpulimits_avg} , ${total_c_mem_avg} , ${total_c_memrequests_avg} , ${total_c_memlimits_avg} " >> ${RESULTS_DIR_J}/../Metrics-cluster.log
 
-	echo "${total_server_requests_thrpt_rate_db_avg} , ${total_server_requests_rsp_time_rate_db_avg} , ${total_server_requests_ms_max_db}" >> ${RESULTS_DIR_J}/../Metrics-rate-prom-db.log
-	echo "${total_server_requests_thrpt_rate_json_avg} , ${total_server_requests_rsp_time_rate_json_avg} , ${total_server_requests_ms_max_json}" >> ${RESULTS_DIR_J}/../Metrics-rate-prom-json.log
-echo "${total_server_requests_thrpt_rate_fortunes_avg} , ${total_server_requests_rsp_time_rate_fortunes_avg} , ${total_server_requests_ms_max_fortunes}" >> ${RESULTS_DIR_J}/../Metrics-rate-prom-fortunes.log
-echo "${total_server_requests_thrpt_rate_plaintext_avg} , ${total_server_requests_rsp_time_rate_plaintext_avg} , ${total_server_requests_ms_max_plaintext}" >> ${RESULTS_DIR_J}/../Metrics-rate-prom-plaintext.log
-echo "${total_server_requests_thrpt_rate_queries_avg} , ${total_server_requests_rsp_time_rate_queries_avg} , ${total_server_requests_ms_max_queries}" >> ${RESULTS_DIR_J}/../Metrics-rate-prom-queries.log
-echo "${total_server_requests_thrpt_rate_updates_avg} , ${total_server_requests_rsp_time_rate_updates_avg} , ${total_server_requests_ms_max_updates}" >> ${RESULTS_DIR_J}/../Metrics-rate-prom-updates.log
+	echo "${total_server_requests_thrpt_rate_db_avg} , ${total_server_requests_rsp_time_rate_db_avg} , ${total_server_requests_ms_max_db} , " >> ${RESULTS_DIR_J}/../Metrics-rate-prom-db.log
+	echo "${total_server_requests_thrpt_rate_json_avg} , ${total_server_requests_rsp_time_rate_json_avg} , ${total_server_requests_ms_max_json} , " >> ${RESULTS_DIR_J}/../Metrics-rate-prom-json.log
+echo "${total_server_requests_thrpt_rate_fortunes_avg} , ${total_server_requests_rsp_time_rate_fortunes_avg} , ${total_server_requests_ms_max_fortunes} , " >> ${RESULTS_DIR_J}/../Metrics-rate-prom-fortunes.log
+echo "${total_server_requests_thrpt_rate_plaintext_avg} , ${total_server_requests_rsp_time_rate_plaintext_avg} , ${total_server_requests_ms_max_plaintext} , " >> ${RESULTS_DIR_J}/../Metrics-rate-prom-plaintext.log
+echo "${total_server_requests_thrpt_rate_queries_avg} , ${total_server_requests_rsp_time_rate_queries_avg} , ${total_server_requests_ms_max_queries} , " >> ${RESULTS_DIR_J}/../Metrics-rate-prom-queries.log
+echo "${total_server_requests_thrpt_rate_updates_avg} , ${total_server_requests_rsp_time_rate_updates_avg} , ${total_server_requests_ms_max_updates} , " >> ${RESULTS_DIR_J}/../Metrics-rate-prom-updates.log
 
-        echo "${SCALE} , ${total_http_ms_quan_50_histo_avg} , ${total_http_ms_quan_95_histo_avg} , ${total_http_ms_quan_97_histo_avg} , ${total_http_ms_quan_99_histo_avg} , ${total_http_ms_quan_999_histo_avg} , ${total_http_ms_quan_9999_histo_avg} , ${total_http_ms_quan_99999_histo_avg} , ${total_http_ms_quan_100_histo_avg}" >> ${RESULTS_DIR_J}/../Metrics-quantiles-prom.log
+        echo "${SCALE} , ${total_http_ms_quan_50_histo_avg} , ${total_http_ms_quan_95_histo_avg} , ${total_http_ms_quan_97_histo_avg} , ${total_http_ms_quan_99_histo_avg} , ${total_http_ms_quan_999_histo_avg} , ${total_http_ms_quan_9999_histo_avg} , ${total_http_ms_quan_99999_histo_avg} , ${total_http_ms_quan_100_histo_avg} , " >> ${RESULTS_DIR_J}/../Metrics-quantiles-prom.log
         echo "${SCALE} , ${total_maxspike_cpu_max} , ${total_maxspike_mem_max} "  >> ${RESULTS_DIR_J}/../Metrics-spikes-prom.log
 
         paste ${RESULTS_DIR_J}/http_seconds_quan_50_histo-measure-temp.log ${RESULTS_DIR_J}/http_seconds_quan_95_histo-measure-temp.log ${RESULTS_DIR_J}/http_seconds_quan_97_histo-measure-temp.log ${RESULTS_DIR_J}/http_seconds_quan_99_histo-measure-temp.log ${RESULTS_DIR_J}/http_seconds_quan_999_histo-measure-temp.log ${RESULTS_DIR_J}/http_seconds_quan_9999_histo-measure-temp.log ${RESULTS_DIR_J}/http_seconds_quan_99999_histo-measure-temp.log ${RESULTS_DIR_J}/http_seconds_quan_100_histo-measure-temp.log >> ${RESULTS_DIR_J}/../Metrics-histogram-prom.log

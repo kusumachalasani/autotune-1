@@ -164,7 +164,7 @@ function parseResults() {
                 plaintext_throughput=$(echo ${total_throughput_avg}*0.163 | bc -l)
 	fi
 	
-	echo ", ${total_throughput_avg} , ${total_responsetime_avg} , ${total_responsetime_max} , ${total_stdev_resptime_avg} , ${total_weberror_avg} , ${ci_throughput} , ${ci_responsetime}" >> ${RESULTS_DIR_J}/../Metrics-${endpoint}-wrk.log
+	echo "${total_throughput_avg} , ${total_responsetime_avg} , ${total_responsetime_max} , ${total_stdev_resptime_avg} , ${total_weberror_avg} , ${ci_throughput} , ${ci_responsetime} , " >> ${RESULTS_DIR_J}/../Metrics-${endpoint}-wrk.log
 	done
 
 	agg_throughput=$(echo ${db_throughput}+${fortunes_throughput}+${json_throughput}+${queries_throughput}+${updates_throughput}+${plaintext_throughput} | bc -l)

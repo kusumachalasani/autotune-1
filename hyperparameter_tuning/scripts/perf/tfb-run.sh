@@ -386,25 +386,24 @@ function run_wrk_workload() {
 #	echo "CMD = ${cmd}" >> ${LOGFILE}
 #	${cmd} > ${RESULTS_LOG}
 
-	${SCRIPT_REPO}/perf/getappmetrics1-promql.sh ${TYPE}-${RUN} ${CPU_MEM_DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
+	## Get all prometheus query data
+	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${CPU_MEM_DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
+	metrics_pid=$!
 
-	${HYPERFOIL_DIR}/wrk.sh --latency --threads=${THREAD} --connections=512 --duration=${DURATION}s http://${IP_ADDR}/db > ${RESULTS_LOG}-db.log
-	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
+	${HYPERFOIL_DIR}/wrk.sh --latency --threads=${THREAD} --connections=${CONNECTIONS} --duration=${DURATION}s http://${IP_ADDR}/db > ${RESULTS_LOG}-db.log
 	sleep 2
-	${HYPERFOIL_DIR}/wrk.sh --latency --threads=${THREAD} --connections=512 --duration=${DURATION}s http://${IP_ADDR}/json > ${RESULTS_LOG}-json.log
-	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
+	${HYPERFOIL_DIR}/wrk.sh --latency --threads=${THREAD} --connections=${CONNECTIONS} --duration=${DURATION}s http://${IP_ADDR}/json > ${RESULTS_LOG}-json.log
 	sleep 2
-	${HYPERFOIL_DIR}/wrk.sh --latency --threads=${THREAD} --connections=512 --duration=${DURATION}s http://${IP_ADDR}/fortunes > ${RESULTS_LOG}-fortunes.log
-	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
+	${HYPERFOIL_DIR}/wrk.sh --latency --threads=${THREAD} --connections=${CONNECTIONS} --duration=${DURATION}s http://${IP_ADDR}/fortunes > ${RESULTS_LOG}-fortunes.log
 	sleep 2
-	${HYPERFOIL_DIR}/wrk.sh --latency --threads=${THREAD} --connections=512 --duration=${DURATION}s http://${IP_ADDR}/queries?queries=20 > ${RESULTS_LOG}-queries.log
-	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
+	${HYPERFOIL_DIR}/wrk.sh --latency --threads=${THREAD} --connections=${CONNECTIONS} --duration=${DURATION}s http://${IP_ADDR}/queries?queries=20 > ${RESULTS_LOG}-queries.log
 	sleep 2
 	${HYPERFOIL_DIR}/wrk.sh --latency --threads=${THREAD} --connections=${CONNECTIONS} --duration=${DURATION}s http://${IP_ADDR}/plaintext > ${RESULTS_LOG}-plaintext.log
-	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
         sleep 2
 	${HYPERFOIL_DIR}/wrk.sh --latency --threads=${THREAD} --connections=${CONNECTIONS} --duration=${DURATION}s http://${IP_ADDR}/updates?queries=20 > ${RESULTS_LOG}-updates.log
-	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
+	sleep 32
+	## Stop collecting prometheus data
+        kill ${metrics_pid} >> ${LOGFILE}
 
 }
 
@@ -447,12 +446,12 @@ function runItr()
 		# Check if the application is running
 		check_app 
 		# Get CPU and MEM info through prometheus queries
-		${SCRIPT_REPO}/perf/getmetrics-promql.sh ${TYPE}-${run} ${CPU_MEM_DURATION} ${RESULTS_DIR_L} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
+		#${SCRIPT_REPO}/perf/getmetrics-promql.sh ${TYPE}-${run} ${CPU_MEM_DURATION} ${RESULTS_DIR_L} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
 		# Run the wrk workload
 		run_wrk_with_scaling ${TYPE} ${run} ${RESULTS_DIR_L}
 		# Sleep till the wrk load completes
-		sleep ${DURATION}
-		sleep 1
+		#sleep ${DURATION}
+		#sleep 1
 	done
 }
 
@@ -521,18 +520,20 @@ ENDPOINTS=(db json fortunes plaintext queries updates)
 echo "INSTANCES ,  THROUGHPUT_RATE_3m , RESPONSE_TIME_RATE_3m , MAX_RESPONSE_TIME , RESPONSE_TIME_50p , RESPONSE_TIME_95p , RESPONSE_TIME_97p , RESPONSE_TIME_99p , RESPONSE_TIME_99.9p , RESPONSE_TIME_99.99p , RESPONSE_TIME_99.999p , RESPONSE_TIME_100p , CPU_USAGE , MEM_USAGE , CPU_MIN , CPU_MAX , MEM_MIN , MEM_MAX , THRPT_PROM_CI , RSPTIME_PROM_CI" > ${RESULTS_DIR_ROOT}/Metrics-prom.log
 for endpoint in "${ENDPOINTS[@]}"
 do
-echo ", ${endpoint}_THROUGHPUT_WRK , ${endpoint}_RESPONSETIME_WRK , ${endpoint}_RESPONSETIME_MAX_WRK , ${endpoint}_RESPONSETIME_STDEV_WRK , ${endpoint}_WEB_ERRORS , ${endpoint}_THRPT_WRK_CI , ${endpoint}_RSPTIME_WRK_CI" > ${RESULTS_DIR_ROOT}/Metrics-${endpoint}-wrk.log
+echo "${endpoint}_THROUGHPUT_WRK , ${endpoint}_RESPONSETIME_WRK , ${endpoint}_RESPONSETIME_MAX_WRK , ${endpoint}_RESPONSETIME_STDEV_WRK , ${endpoint}_WEB_ERRORS , ${endpoint}_THRPT_WRK_CI , ${endpoint}_RSPTIME_WRK_CIi , " > ${RESULTS_DIR_ROOT}/Metrics-${endpoint}-wrk.log
 done
 
-echo " COMPOSITE_THRPT_WRK , " > ${RESULTS_DIR_ROOT}/Metrics-composite-wrk.log
-echo ", CPU_REQ , MEM_REQ , CPU_LIM , MEM_LIM , QRKS_TP_CORETHREADS , QRKS_TP_QUEUESIZE , QRKS_DS_JDBC_MINSIZE , QRKS_DS_JDBC_MAXSIZE , FreqInlineSize , MaxInlineLevel , MinInliningThreshold , CompileThreshold , CompileThresholdScaling , ConcGCThreads , InlineSmallCode , LoopUnrollLimit , LoopUnrollMin  , MinSurvivorRatio , NewRatio , TieredStopAtLevel , TieredCompilation , AllowParallelDefineClass , AllowVectorizeOnDemand , AlwaysCompileLoopMethods , AlwaysPreTouch , AlwaysTenure , BackgroundCompilation , DoEscapeAnalysis , UseInlineCaches , UseLoopPredicate , UseStringDeduplication , UseSuperWord , UseTypeSpeculation , gcpolicy , StackTraceInThrowable , checkBounds , httpiothreads" > ${RESULTS_DIR_ROOT}/Metrics-config.log
-echo ", DEPLOYMENT_NAME , NAMESPACE , IMAGE_NAME , CONTAINER_NAME" > ${RESULTS_DIR_ROOT}/deploy-config.log
+echo "COMPOSITE_THRPT_WRK , " > ${RESULTS_DIR_ROOT}/Metrics-composite-wrk.log
+echo "COMPOSITE_THRPT_PROM , " > ${RESULTS_DIR_ROOT}/Metrics-composite-prom.log
+echo "CPU_USAGE , MEM_USAGE , CPU_MIN , CPU_MAX , MEM_MIN , MEM_MAX , " > ${RESULTS_DIR_ROOT}/Metrics-cpumem-prom.log
+echo "CPU_REQ , MEM_REQ , CPU_LIM , MEM_LIM , QRKS_TP_CORETHREADS , QRKS_TP_QUEUESIZE , QRKS_DS_JDBC_MINSIZE , QRKS_DS_JDBC_MAXSIZE , FreqInlineSize , MaxInlineLevel , MinInliningThreshold , CompileThreshold , CompileThresholdScaling , ConcGCThreads , InlineSmallCode , LoopUnrollLimit , LoopUnrollMin  , MinSurvivorRatio , NewRatio , TieredStopAtLevel , TieredCompilation , AllowParallelDefineClass , AllowVectorizeOnDemand , AlwaysCompileLoopMethods , AlwaysPreTouch , AlwaysTenure , BackgroundCompilation , DoEscapeAnalysis , UseInlineCaches , UseLoopPredicate , UseStringDeduplication , UseSuperWord , UseTypeSpeculation , gcpolicy , StackTraceInThrowable , checkBounds , httpiothreads , " > ${RESULTS_DIR_ROOT}/Metrics-config.log
+echo "DEPLOYMENT_NAME , NAMESPACE , IMAGE_NAME , CONTAINER_NAME , " > ${RESULTS_DIR_ROOT}/deploy-config.log
 
 echo "INSTANCES , CLUSTER_CPU% , C_CPU_REQ% , C_CPU_LIM% , CLUSTER_MEM% , C_MEM_REQ% , C_MEM_LIM% " > ${RESULTS_DIR_ROOT}/Metrics-cluster.log
 echo "RUN , CPU_REQ , MEM_REQ , CPU_LIM , MEM_LIM , THROUGHPUT , RESPONSETIME , WEB_ERRORS , RESPONSETIME_MAX , RESPONSETIME_STDEV , CPU , CPU_MIN , CPU_MAX , MEM , MEM_MIN , MEM_MAX" > ${RESULTS_DIR_ROOT}/Metrics-raw.log
 echo "INSTANCES ,  MEM_RSS , MEM_USAGE " > ${RESULTS_DIR_ROOT}/Metrics-mem-prom.log
 echo "INSTANCES ,  CPU_USAGE" > ${RESULTS_DIR_ROOT}/Metrics-cpu-prom.log
-echo ", 50p , 95p , 98p , 99p , 99.9p" > ${RESULTS_DIR_ROOT}/Metrics-percentile-prom.log
+echo "50p , 95p , 98p , 99p , 99.9p , " > ${RESULTS_DIR_ROOT}/Metrics-percentile-prom.log
 echo "ITR , THROUGHPUT , RESPONSE_TIME , THROUGHPUT_RATE_3m , RESPONSE_TIME_RATE_3m" >> ${RESULTS_DIR_ROOT}/server_requests-metrics-measure-raw.log
 echo "THROUGHPUT_RATE_1m , RESPONSE_TIME_RATE_1m , THROUGHPUT_RATE_3m , RESPONSE_TIME_RATE_3m , THROUGHPUT_RATE_5m , RESPONSE_TIME_RATE_5m , THROUGHPUT_RATE_6m , RESPONSE_TIME_RATE_6m " > ${RESULTS_DIR_ROOT}/Metrics-rate-prom.log
 echo "INSTANCES , 50p_HISTO , 95p_HISTO , 97p_HISTO , 99p_HISTO , 99.9p_HISTO , 99.99p_HISTO , 99.999p_HISTO , 100p_HISTO" >> ${RESULTS_DIR_ROOT}/Metrics-quantiles-prom.log
@@ -545,8 +546,8 @@ echo "THROUGHPUT_QUERIES , RSP_TIME_QUERIES , MAX_RSP_TIME_QUERIES , THRPT_QUERI
 echo "THROUGHPUT_PLAINTEXT , RSP_TIME_PLAINTEXT , MAX_RSP_TIME_PLAINTEXT , THRPT_PLAINTEXT_CI , RSP_TIME_PLAINTEXT_CI " > ${RESULTS_DIR_ROOT}/Metrics-plaintext-prom.log
 echo "THROUGHPUT_UPDATES , RSP_TIME_UPDATES , MAX_RSP_TIME_UPDATES , THRPT_UPDATES_CI , RSP_TIME_UPDATES_CI " > ${RESULTS_DIR_ROOT}/Metrics-updates-prom.log
 
-echo ", ${CPU_REQ} , ${MEM_REQ} , ${CPU_LIM} , ${MEM_LIM} , ${quarkustpcorethreads} , ${quarkustpqueuesize} , ${quarkusdatasourcejdbcminsize} , ${quarkusdatasourcejdbcmaxsize} , ${FreqInlineSize} , ${MaxInlineLevel} , ${MinInliningThreshold} , ${CompileThreshold} , ${CompileThresholdScaling} , ${ConcGCThreads} , ${InlineSmallCode} , ${LoopUnrollLimit} , ${LoopUnrollMin} , ${MinSurvivorRatio} , ${NewRatio} , ${TieredStopAtLevel} , ${TieredCompilation} , ${AllowParallelDefineClass} , ${AllowVectorizeOnDemand} , ${AlwaysCompileLoopMethods} , ${AlwaysPreTouch} , ${AlwaysTenure} , ${BackgroundCompilation} , ${DoEscapeAnalysis} , ${UseInlineCaches} , ${UseLoopPredicate} , ${UseStringDeduplication} , ${UseSuperWord} , ${UseTypeSpeculation} ${gcpolicy} ${StackTraceInThrowable} ${checkBounds} ${httpiothreads}" >> ${RESULTS_DIR_ROOT}/Metrics-config.log
-echo ", tfb-qrh-sample , ${NAMESPACE} , ${TFB_IMAGE} , tfb-qrh" >> ${RESULTS_DIR_ROOT}/deploy-config.log
+echo "${CPU_REQ} , ${MEM_REQ} , ${CPU_LIM} , ${MEM_LIM} , ${quarkustpcorethreads} , ${quarkustpqueuesize} , ${quarkusdatasourcejdbcminsize} , ${quarkusdatasourcejdbcmaxsize} , ${FreqInlineSize} , ${MaxInlineLevel} , ${MinInliningThreshold} , ${CompileThreshold} , ${CompileThresholdScaling} , ${ConcGCThreads} , ${InlineSmallCode} , ${LoopUnrollLimit} , ${LoopUnrollMin} , ${MinSurvivorRatio} , ${NewRatio} , ${TieredStopAtLevel} , ${TieredCompilation} , ${AllowParallelDefineClass} , ${AllowVectorizeOnDemand} , ${AlwaysCompileLoopMethods} , ${AlwaysPreTouch} , ${AlwaysTenure} , ${BackgroundCompilation} , ${DoEscapeAnalysis} , ${UseInlineCaches} , ${UseLoopPredicate} , ${UseStringDeduplication} , ${UseSuperWord} , ${UseTypeSpeculation} ${gcpolicy} , ${StackTraceInThrowable} , ${checkBounds} , ${httpiothreads} , " >> ${RESULTS_DIR_ROOT}/Metrics-config.log
+echo "tfb-qrh-sample , ${NAMESPACE} , ${TFB_IMAGE} , tfb-qrh , " >> ${RESULTS_DIR_ROOT}/deploy-config.log
 
 if [ ${CLUSTER_TYPE} == "minikube" ]; then
 #	reload_minikube ${K_CPU} ${K_MEM}
@@ -579,7 +580,7 @@ done
 sleep 10
 echo " "
 # Display the Metrics log file
-paste ${RESULTS_DIR_ROOT}/Metrics-composite-wrk.log ${RESULTS_DIR_ROOT}/Metrics-prom.log ${RESULTS_DIR_ROOT}/Metrics-config.log ${RESULTS_DIR_ROOT}/deploy-config.log
+paste ${RESULTS_DIR_ROOT}/Metrics-composite-prom.log ${RESULTS_DIR_ROOT}/Metrics-composite-wrk.log ${RESULTS_DIR_ROOT}/Metrics-cpumem-prom.log ${RESULTS_DIR_ROOT}/Metrics-config.log ${RESULTS_DIR_ROOT}/deploy-config.log
  
 paste ${RESULTS_DIR_ROOT}/Metrics-db-wrk.log ${RESULTS_DIR_ROOT}/Metrics-json-wrk.log ${RESULTS_DIR_ROOT}/Metrics-fortunes-wrk.log ${RESULTS_DIR_ROOT}/Metrics-plaintext-wrk.log ${RESULTS_DIR_ROOT}/Metrics-queries-wrk.log ${RESULTS_DIR_ROOT}/Metrics-updates-wrk.log
 
