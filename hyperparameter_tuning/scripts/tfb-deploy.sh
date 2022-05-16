@@ -292,7 +292,7 @@ function createInstances() {
 		done
 
 		## Specific to GC policy
-		if [[ -z ${gcpolicy} ]]; then
+		if [[ ! -z ${gcpolicy} ]]; then
 			OPTIONS_VAR="${OPTIONS_VAR} -XX:+${gcpolicy}"
 		fi
 
