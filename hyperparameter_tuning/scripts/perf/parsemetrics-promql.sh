@@ -57,7 +57,7 @@ function parsePromMetrics()  {
                 total_milliseconds_sum=$(echo ${total_seconds_sum}*1000 | bc -l)
                 total_seconds_count=`cat ${RESULTS_DIR_J}/app_timer_count-${TYPE}-${ITR}-${endpoint}.log`
                 rsp_time=$(echo ${total_milliseconds_sum}/${total_seconds_count}| bc -l)
-                throughput=$(echo ${total_seconds_count}/${total_seconds_sum}| bc -l)
+                throughput=$(echo ${total_seconds_count}/${WRKLOAD_DURATION}| bc -l)
                 echo ${rsp_time} > ${RESULTS_DIR_J}/app_timer_rsp_time-${TYPE}-${ITR}-${endpoint}.log
                 echo ${throughput} > ${RESULTS_DIR_J}/app_timer_thrpt-${TYPE}-${ITR}-${endpoint}.log
         fi
@@ -84,7 +84,7 @@ function parsePromMetrics()  {
                 total_milliseconds_sum=$(echo ${total_seconds_sum}*1000 | bc -l)
                 total_seconds_count=`cat ${RESULTS_DIR_J}/server_requests_count-${TYPE}-${ITR}-${endpoint}.log`
                 rsp_time=$(echo ${total_milliseconds_sum}/${total_seconds_count}| bc -l)
-                throughput=$(echo ${total_seconds_count}/${total_seconds_sum}| bc -l)
+                throughput=$(echo ${total_seconds_count}/${WRKLOAD_DURATION} | bc -l)
                 echo ${rsp_time} > ${RESULTS_DIR_J}/server_requests_rsp_time-${TYPE}-${ITR}-${endpoint}.log
                 echo ${throughput} > ${RESULTS_DIR_J}/server_requests_thrpt-${TYPE}-${ITR}-${endpoint}.log
         fi
@@ -132,6 +132,7 @@ function parsePodMicroMeterLog()
 	data_sum=0
 	data_min=0
 	data_max=0
+
 		if [ ${TYPE} == "measure" ]; then
 			last_measure_number=$(echo ${MEASURES}-1 | bc)
 		elif [ ${TYPE} == "warmup" ]; then
@@ -141,7 +142,15 @@ function parsePodMicroMeterLog()
 		if [ ${MODE} == "app_timer_count" ] || [ ${MODE} == "app_timer_sum" ] || [ ${MODE} == "server_requests_count" ] || [ ${MODE} == "server_requests_sum" ]; then
                         if [ -s "${RESULTS_DIR_P}/${MODE}-${TYPE}-0-${ENDPOINT}.json" ]; then
                                 cat ${RESULTS_DIR_P}/${MODE}-${TYPE}*-${ENDPOINT}.json | cut -d ";" -f4 | cut -d '"' -f1 | uniq | grep -v "^$" | sort -n  > ${RESULTS_DIR_P}/temp-data.log
-                                start_counter=`cat ${RESULTS_DIR_P}/temp-data.log | head -1`
+				total_lines=`cat ${RESULTS_DIR_P}/temp-data.log | wc -l`
+				### Avoiding 1st value from the log as it comes from previous runs.	
+				if [[ ${TYPE} == "warmup" ]] && [[ ${ITR} == 0 ]]; then
+	                                start_counter=`cat ${RESULTS_DIR_P}/temp-data.log | head -1`
+				elif [[ ${total_lines} -lt 3 ]]; then
+					start_counter=`cat ${RESULTS_DIR_P}/temp-data.log | head -1`
+				else
+					start_counter=`cat ${RESULTS_DIR_P}/temp-data.log | head -2 | tail -1`
+				fi
                                 end_counter=`cat ${RESULTS_DIR_P}/temp-data.log | tail -1`
                                 counter_val=$(echo ${end_counter}-${start_counter}| bc -l)
                                 echo "${counter_val}" > ${RESULTS_DIR_J}/${MODE}-${TYPE}-${ITR}-${ENDPOINT}.log
@@ -402,12 +411,19 @@ function parseResults() {
 		done
 	done
 
-json_thrpt=$(echo ${total_server_requests_thrpt_rate_json_avg}*1 | bc -l)
-db_thrpt=$(echo ${total_server_requests_thrpt_rate_db_avg}*1.737 | bc -l)
-queries_thrpt=$(echo ${total_server_requests_thrpt_rate_queries_avg}*21.745 | bc -l)
-fortunes_thrpt=$(echo ${total_server_requests_thrpt_rate_fortunes_avg}*4.077 | bc -l)
-updates_thrpt=$(echo ${total_server_requests_thrpt_rate_updates_avg}*68.363 | bc -l)
-plaintext_thrpt=$(echo ${total_server_requests_thrpt_rate_json_avg}*0.163 | bc -l)
+#json_thrpt=$(echo ${total_server_requests_thrpt_rate_json_avg}*1 | bc -l)
+#db_thrpt=$(echo ${total_server_requests_thrpt_rate_db_avg}*1.737 | bc -l)
+#queries_thrpt=$(echo ${total_server_requests_thrpt_rate_queries_avg}*21.745 | bc -l)
+#fortunes_thrpt=$(echo ${total_server_requests_thrpt_rate_fortunes_avg}*4.077 | bc -l)
+#updates_thrpt=$(echo ${total_server_requests_thrpt_rate_updates_avg}*68.363 | bc -l)
+#plaintext_thrpt=$(echo ${total_server_requests_thrpt_rate_plaintext_avg}*0.163 | bc -l)
+
+json_thrpt=$(echo ${total_server_requests_thrpt_json_avg}*1 | bc -l)
+db_thrpt=$(echo ${total_server_requests_thrpt_db_avg}*1.737 | bc -l)
+queries_thrpt=$(echo ${total_server_requests_thrpt_queries_avg}*21.745 | bc -l)
+fortunes_thrpt=$(echo ${total_server_requests_thrpt_fortunes_avg}*4.077 | bc -l)
+updates_thrpt=$(echo ${total_server_requests_thrpt_updates_avg}*68.363 | bc -l)
+plaintext_thrpt=$(echo ${total_server_requests_thrpt_plaintext_avg}*0.163 | bc -l)
 
 agg_throughput=$( echo ${json_thrpt}+${db_thrpt}+${queries_thrpt}+${fortunes_thrpt}+${updates_thrpt}+${plaintext_thrpt} | bc -l)
 if [ ! -z ${agg_throughput} ]; then
@@ -417,6 +433,19 @@ else
 fi
 
 echo "${SCALE} , ${composite_throughput} , ${total_server_requests_thrpt_rate_db_avg} , ${total_server_requests_rsp_time_rate_db_avg} , ${total_server_requests_ms_max_db} , ${total_http_ms_quan_50_histo_avg} , ${total_http_ms_quan_95_histo_avg} , ${total_http_ms_quan_97_histo_avg} , ${total_http_ms_quan_99_histo_avg} , ${total_http_ms_quan_999_histo_avg} , ${total_http_ms_quan_9999_histo_avg} , ${total_http_ms_quan_99999_histo_avg} , ${total_http_ms_quan_100_histo_avg} , ${total_cpu_avg} , ${total_mem_avg} , ${total_cpu_min} , ${total_cpu_max} , ${total_mem_min} , ${total_mem_max} , ${ci_server_requests_thrpt_rate_3m} , ${ci_server_requests_rsp_time_rate_3m} " >> ${RESULTS_DIR_J}/../Metrics-prom.log
+
+echo " ${total_server_requests_thrpt_db_avg} , ${total_server_requests_rsp_time_db_avg} , ${total_server_requests_ms_max_db} , ${ci_server_requests_thrpt_db} , ${ci_server_requests_rsp_time_db}" >> ${RESULTS_DIR_J}/../Metrics-db-prom.log
+
+echo " ${total_server_requests_thrpt_json_avg} , ${total_server_requests_rsp_time_json_avg} , ${total_server_requests_ms_max_json} , ${ci_server_requests_thrpt_json} , ${ci_server_requests_rsp_time_json}" >> ${RESULTS_DIR_J}/../Metrics-json-prom.log
+
+echo " ${total_server_requests_thrpt_fortunes_avg} , ${total_server_requests_rsp_time_fortunes_avg} , ${total_server_requests_ms_max_fortunes} , ${ci_server_requests_thrpt_fortunes} , ${ci_server_requests_rsp_time_fortunes}" >> ${RESULTS_DIR_J}/../Metrics-fortunes-prom.log
+
+echo " ${total_server_requests_thrpt_queries_avg} , ${total_server_requests_rsp_time_queries_avg} , ${total_server_requests_ms_max_queries} , ${ci_server_requests_thrpt_queries} , ${ci_server_requests_rsp_time_queries}" >> ${RESULTS_DIR_J}/../Metrics-queries-prom.log
+
+echo " ${total_server_requests_thrpt_plaintext_avg} , ${total_server_requests_rsp_time_plaintext_avg} , ${total_server_requests_ms_max_plaintext} , ${ci_server_requests_thrpt_plaintext} , ${ci_server_requests_rsp_time_plaintext}" >> ${RESULTS_DIR_J}/../Metrics-plaintext-prom.log
+
+echo " ${total_server_requests_thrpt_updates_avg} , ${total_server_requests_rsp_time_updates_avg} , ${total_server_requests_ms_max_updates} , ${ci_server_requests_thrpt_updates} , ${ci_server_requests_rsp_time_updates}" >> ${RESULTS_DIR_J}/../Metrics-updates-prom.log
+
         echo "${SCALE} ,  ${total_mem_avg} , ${total_memusage_avg} " >> ${RESULTS_DIR_J}/../Metrics-mem-prom.log
         echo "${SCALE} ,  ${total_cpu_avg} " >> ${RESULTS_DIR_J}/../Metrics-cpu-prom.log
 #       echo "${SCALE} , ${total_c_cpu_avg} , ${total_c_cpurequests_avg} , ${total_c_cpulimits_avg} , ${total_c_mem_avg} , ${total_c_memrequests_avg} , ${total_c_memlimits_avg} " >> ${RESULTS_DIR_J}/../Metrics-cluster.log
@@ -453,5 +482,6 @@ SCALE=$3
 WARMUPS=$4
 MEASURES=$5
 SCRIPT_REPO=$6
+WRKLOAD_DURATION=$7
 
-parseResults ${TOTAL_ITR} ${RESULTS_DIR_J} ${SCALE} ${WARMUPS} ${MEASURES} ${SCRIPT_REPO}
+parseResults ${TOTAL_ITR} ${RESULTS_DIR_J} ${SCALE} ${WARMUPS} ${MEASURES} ${SCRIPT_REPO} ${WRKLOAD_DURATION}

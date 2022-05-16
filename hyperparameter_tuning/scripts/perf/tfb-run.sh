@@ -320,10 +320,10 @@ RESULTS_DIR_ROOT=${RESULTS_DIR_PATH}/tfb-$(date +%Y%m%d%H%M)
 mkdir -p ${RESULTS_DIR_ROOT}
 
 #Adding 5 secs buffer to retrieve CPU and MEM info
+CPU_MEM_DURATION_TEMP=$(echo ${DURATION}*6 | bc )
+CPU_MEM_DURATION=$( echo ${CPU_MEM_DURATION_TEMP}+60 | bc )
 #CPU_MEM_DURATION=`expr 5 * ${DURATION}`
 #echo "durations i ............${CPU_MEM_DURATION}"
-#CPU_MEM_DURATION=75
-CPU_MEM_DURATION=190
 
 # Check if the dependencies required to apply the load is present 
 check_load_prereq 
@@ -386,29 +386,23 @@ function run_wrk_workload() {
 #	echo "CMD = ${cmd}" >> ${LOGFILE}
 #	${cmd} > ${RESULTS_LOG}
 
-	${SCRIPT_REPO}/perf/getappmetrics1-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
+	${SCRIPT_REPO}/perf/getappmetrics1-promql.sh ${TYPE}-${RUN} ${CPU_MEM_DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
 
-#	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} db &
 	${HYPERFOIL_DIR}/wrk.sh --latency --threads=${THREAD} --connections=512 --duration=${DURATION}s http://${IP_ADDR}/db > ${RESULTS_LOG}-db.log
 	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
 	sleep 2
-#	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} json &
 	${HYPERFOIL_DIR}/wrk.sh --latency --threads=${THREAD} --connections=512 --duration=${DURATION}s http://${IP_ADDR}/json > ${RESULTS_LOG}-json.log
 	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
 	sleep 2
-#	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} fortunes &
 	${HYPERFOIL_DIR}/wrk.sh --latency --threads=${THREAD} --connections=512 --duration=${DURATION}s http://${IP_ADDR}/fortunes > ${RESULTS_LOG}-fortunes.log
 	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
 	sleep 2
-#	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} queries &
 	${HYPERFOIL_DIR}/wrk.sh --latency --threads=${THREAD} --connections=512 --duration=${DURATION}s http://${IP_ADDR}/queries?queries=20 > ${RESULTS_LOG}-queries.log
 	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
 	sleep 2
-#	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} plaintext &
 	${HYPERFOIL_DIR}/wrk.sh --latency --threads=${THREAD} --connections=${CONNECTIONS} --duration=${DURATION}s http://${IP_ADDR}/plaintext > ${RESULTS_LOG}-plaintext.log
 	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
         sleep 2
-#	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} updates &
 	${HYPERFOIL_DIR}/wrk.sh --latency --threads=${THREAD} --connections=${CONNECTIONS} --duration=${DURATION}s http://${IP_ADDR}/updates?queries=20 > ${RESULTS_LOG}-updates.log
 	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
 
@@ -544,6 +538,12 @@ echo "THROUGHPUT_RATE_1m , RESPONSE_TIME_RATE_1m , THROUGHPUT_RATE_3m , RESPONSE
 echo "INSTANCES , 50p_HISTO , 95p_HISTO , 97p_HISTO , 99p_HISTO , 99.9p_HISTO , 99.99p_HISTO , 99.999p_HISTO , 100p_HISTO" >> ${RESULTS_DIR_ROOT}/Metrics-quantiles-prom.log
 echo "INSTANCES , CPU_MAXSPIKE , MEM_MAXSPIKE "  >> ${RESULTS_DIR_ROOT}/Metrics-spikes-prom.log
 echo "50p_HISTO , 95p_HISTO , 97p_HISTO , 99p_HISTO , 99.9p_HISTO , 99.99p_HISTO , 99.999p_HISTO , 100p_HISTO" >> ${RESULTS_DIR_ROOT}/Metrics-histogram-prom.log
+echo "THROUGHPUT_DB , RSP_TIME_DB , MAX_RSP_TIME_DB , THRPT_DB_CI , RSP_TIME_DB_CI " > ${RESULTS_DIR_ROOT}/Metrics-db-prom.log
+echo "THROUGHPUT_JSON , RSP_TIME_JSON , MAX_RSP_TIME_JSON , THRPT_JSON_CI , RSP_TIME_JSON_CI " > ${RESULTS_DIR_ROOT}/Metrics-json-prom.log
+echo "THROUGHPUT_FORTUNES , RSP_TIME_FORTUNES , MAX_RSP_TIME_FORTUNES , THRPT_FORTUNES_CI , RSP_TIME_FORTUNES_CI " > ${RESULTS_DIR_ROOT}/Metrics-fortunes-prom.log
+echo "THROUGHPUT_QUERIES , RSP_TIME_QUERIES , MAX_RSP_TIME_QUERIES , THRPT_QUERIES_CI , RSP_TIME_QUERIES_CI " > ${RESULTS_DIR_ROOT}/Metrics-queries-prom.log
+echo "THROUGHPUT_PLAINTEXT , RSP_TIME_PLAINTEXT , MAX_RSP_TIME_PLAINTEXT , THRPT_PLAINTEXT_CI , RSP_TIME_PLAINTEXT_CI " > ${RESULTS_DIR_ROOT}/Metrics-plaintext-prom.log
+echo "THROUGHPUT_UPDATES , RSP_TIME_UPDATES , MAX_RSP_TIME_UPDATES , THRPT_UPDATES_CI , RSP_TIME_UPDATES_CI " > ${RESULTS_DIR_ROOT}/Metrics-updates-prom.log
 
 echo ", ${CPU_REQ} , ${MEM_REQ} , ${CPU_LIM} , ${MEM_LIM} , ${quarkustpcorethreads} , ${quarkustpqueuesize} , ${quarkusdatasourcejdbcminsize} , ${quarkusdatasourcejdbcmaxsize} , ${FreqInlineSize} , ${MaxInlineLevel} , ${MinInliningThreshold} , ${CompileThreshold} , ${CompileThresholdScaling} , ${ConcGCThreads} , ${InlineSmallCode} , ${LoopUnrollLimit} , ${LoopUnrollMin} , ${MinSurvivorRatio} , ${NewRatio} , ${TieredStopAtLevel} , ${TieredCompilation} , ${AllowParallelDefineClass} , ${AllowVectorizeOnDemand} , ${AlwaysCompileLoopMethods} , ${AlwaysPreTouch} , ${AlwaysTenure} , ${BackgroundCompilation} , ${DoEscapeAnalysis} , ${UseInlineCaches} , ${UseLoopPredicate} , ${UseStringDeduplication} , ${UseSuperWord} , ${UseTypeSpeculation} ${gcpolicy} ${StackTraceInThrowable} ${checkBounds} ${httpiothreads}" >> ${RESULTS_DIR_ROOT}/Metrics-config.log
 echo ", tfb-qrh-sample , ${NAMESPACE} , ${TFB_IMAGE} , tfb-qrh" >> ${RESULTS_DIR_ROOT}/deploy-config.log
@@ -570,7 +570,7 @@ do
 	# Parse the results
 	${SCRIPT_REPO}/perf/parsemetrics-wrk.sh ${TOTAL_ITR} ${RESULTS_SC} ${scale} ${WARMUPS} ${MEASURES} ${NAMESPACE} ${SCRIPT_REPO} ${CLUSTER_TYPE} ${APP_NAME}
 	sleep 5
-	${SCRIPT_REPO}/perf/parsemetrics-promql.sh ${TOTAL_ITR} ${RESULTS_SC} ${scale} ${WARMUPS} ${MEASURES} ${SCRIPT_REPO}
+	${SCRIPT_REPO}/perf/parsemetrics-promql.sh ${TOTAL_ITR} ${RESULTS_SC} ${scale} ${WARMUPS} ${MEASURES} ${SCRIPT_REPO} ${DURATION}
 	
 done
 
@@ -579,7 +579,12 @@ done
 sleep 10
 echo " "
 # Display the Metrics log file
-paste ${RESULTS_DIR_ROOT}/Metrics-composite-wrk.log ${RESULTS_DIR_ROOT}/Metrics-prom.log ${RESULTS_DIR_ROOT}/Metrics-db-wrk.log ${RESULTS_DIR_ROOT}/Metrics-json-wrk.log ${RESULTS_DIR_ROOT}/Metrics-fortunes-wrk.log ${RESULTS_DIR_ROOT}/Metrics-plaintext-wrk.log ${RESULTS_DIR_ROOT}/Metrics-queries-wrk.log ${RESULTS_DIR_ROOT}/Metrics-updates-wrk.log ${RESULTS_DIR_ROOT}/Metrics-config.log ${RESULTS_DIR_ROOT}/deploy-config.log
+paste ${RESULTS_DIR_ROOT}/Metrics-composite-wrk.log ${RESULTS_DIR_ROOT}/Metrics-prom.log ${RESULTS_DIR_ROOT}/Metrics-config.log ${RESULTS_DIR_ROOT}/deploy-config.log
+ 
+paste ${RESULTS_DIR_ROOT}/Metrics-db-wrk.log ${RESULTS_DIR_ROOT}/Metrics-json-wrk.log ${RESULTS_DIR_ROOT}/Metrics-fortunes-wrk.log ${RESULTS_DIR_ROOT}/Metrics-plaintext-wrk.log ${RESULTS_DIR_ROOT}/Metrics-queries-wrk.log ${RESULTS_DIR_ROOT}/Metrics-updates-wrk.log
+
+paste ${RESULTS_DIR_ROOT}/Metrics-db-prom.log ${RESULTS_DIR_ROOT}/Metrics-json-prom.log ${RESULTS_DIR_ROOT}/Metrics-fortunes-prom.log ${RESULTS_DIR_ROOT}/Metrics-plaintext-prom.log ${RESULTS_DIR_ROOT}/Metrics-queries-prom.log ${RESULTS_DIR_ROOT}/Metrics-updates-prom.log
+
 #paste ${RESULTS_DIR_ROOT}/Metrics-quantiles-prom.log
 
 paste ${RESULTS_DIR_ROOT}/Metrics-prom.log ${RESULTS_DIR_ROOT}/Metrics-db-wrk.log ${RESULTS_DIR_ROOT}/deploy-config.log > ${RESULTS_DIR_ROOT}/output.csv
