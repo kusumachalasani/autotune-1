@@ -491,7 +491,7 @@ function runIterations() {
 			# err_exit "Error: ${APP_NAME} deployment failed" >> ${LOGFILE}
 		fi
 		# Add extra sleep time for the deployment to complete as few machines takes longer time.
-		sleep 180
+		sleep 100
 		
 		##Debug
 		#Extra sleep time
@@ -505,7 +505,7 @@ function runIterations() {
 		echo "Running ${MEASURES} measures" >> ${LOGFILE}
 		# Perform measure runs
 		runItr measure ${MEASURES} ${RESULTS_DIR_I}
-		sleep 15
+		sleep 2
 		# get the kruize recommendation for tfb application
 		# commenting for now as it is not required in all cases
 		#get_recommendations_from_kruize ${RESULTS_DIR_I}
@@ -567,7 +567,7 @@ do
 	# Perform warmup and measure runs
 	runIterations ${scale} ${TOTAL_ITR} ${WARMUPS} ${MEASURES} ${RESULTS_SC}
 	echo "Parsing results for ${scale} instances" >> ${LOGFILE}
-	sleep 60
+	sleep 5
 	# Parse the results
 	${SCRIPT_REPO}/perf/parsemetrics-wrk.sh ${TOTAL_ITR} ${RESULTS_SC} ${scale} ${WARMUPS} ${MEASURES} ${NAMESPACE} ${SCRIPT_REPO} ${CLUSTER_TYPE} ${APP_NAME}
 	sleep 5
@@ -577,7 +577,7 @@ done
 
 ## Cleanup all the deployments
 #${SCRIPT_REPO}/tfb-cleanup.sh -c ${CLUSTER_TYPE} -n ${NAMESPACE} >> ${LOGFILE}
-sleep 10
+sleep 2
 echo " "
 # Display the Metrics log file
 paste ${RESULTS_DIR_ROOT}/Metrics-composite-prom.log ${RESULTS_DIR_ROOT}/Metrics-composite-wrk.log ${RESULTS_DIR_ROOT}/Metrics-cpumem-prom.log ${RESULTS_DIR_ROOT}/Metrics-db-wrk.log ${RESULTS_DIR_ROOT}/Metrics-json-wrk.log ${RESULTS_DIR_ROOT}/Metrics-fortunes-wrk.log ${RESULTS_DIR_ROOT}/Metrics-plaintext-wrk.log ${RESULTS_DIR_ROOT}/Metrics-queries-wrk.log ${RESULTS_DIR_ROOT}/Metrics-updates-wrk.log ${RESULTS_DIR_ROOT}/Metrics-db-prom.log ${RESULTS_DIR_ROOT}/Metrics-json-prom.log ${RESULTS_DIR_ROOT}/Metrics-fortunes-prom.log ${RESULTS_DIR_ROOT}/Metrics-plaintext-prom.log ${RESULTS_DIR_ROOT}/Metrics-queries-prom.log ${RESULTS_DIR_ROOT}/Metrics-updates-prom.log ${RESULTS_DIR_ROOT}/Metrics-config.log ${RESULTS_DIR_ROOT}/deploy-config.log

@@ -372,7 +372,7 @@ function createInstances() {
 	done
 
 	#Wait till ${APP_NAME} starts
-	sleep 20
+	sleep 15
 
 	#Expose the services
 	if [[ ${CLUSTER_TYPE} == "openshift" ]]; then
@@ -385,7 +385,7 @@ function createInstances() {
 	fi
 
 	## extra sleep time
-	sleep 60
+	sleep 20
 			
 	# Check if the application is running
 	#check_app >> ${LOGFILE}
@@ -394,7 +394,7 @@ function createInstances() {
 # Delete the tfb-qrh and tfb-database deployments,services and routes if it is already present 
 function stopAllInstances() {
 	${TFB_REPO}/tfb-cleanup.sh -c ${CLUSTER_TYPE} -n ${NAMESPACE} >> ${LOGFILE}
-	sleep 30
+	sleep 15
 
 	##extra sleep time
 #	sleep 60
