@@ -44,12 +44,10 @@ function parsePromMetrics()  {
 			parsePodMemLog ${podmemlog} ${TYPE} ${run} ${ITR}
 		done
 	done
-
 	for podmmlog in "${MICROMETER_LOGS[@]}"
 	do
 		parsePodMicroMeterLog ${podmmlog} ${TYPE} ${ITR} ${endpoint}
 	done
-
 	## Calculate response time
         if [ -s ${RESULTS_DIR_J}/app_timer_sum-${TYPE}-${ITR}-${endpoint}.log ]; then
                 total_seconds_sum=`cat ${RESULTS_DIR_J}/app_timer_sum-${TYPE}-${ITR}-${endpoint}.log`
@@ -78,17 +76,16 @@ function parsePromMetrics()  {
         echo "${ITR}, ${throughput} , ${rsp_time} , ${throughput_rate_3m} , ${rsp_time_rate_3m} " >> ${RESULTS_DIR_J}/../app-calc-metrics-${TYPE}-raw.log
 
 	## Calculate response time
-        if [ -s ${RESULTS_DIR_J}/server_requests_sum-${TYPE}-${ITR}-${endpoint}.log ]; then
+        if [ -s ${RESULTS_DIR_J}/server_requests_sum-${TYPE}-${ITR}-${endpoint}.log ];then
                 total_seconds_sum=`cat ${RESULTS_DIR_J}/server_requests_sum-${TYPE}-${ITR}-${endpoint}.log`
                 # Convert seconds to ms to avoid 0 as response time.
                 total_milliseconds_sum=$(echo ${total_seconds_sum}*1000 | bc -l)
                 total_seconds_count=`cat ${RESULTS_DIR_J}/server_requests_count-${TYPE}-${ITR}-${endpoint}.log`
                 rsp_time=$(echo ${total_milliseconds_sum}/${total_seconds_count}| bc -l)
-                throughput=$(echo ${total_seconds_count}/${WRKLOAD_DURATION} | bc -l)
+                throughput=$(echo ${total_seconds_count}/${WRKLOAD_DURATION}| bc -l)
                 echo ${rsp_time} > ${RESULTS_DIR_J}/server_requests_rsp_time-${TYPE}-${ITR}-${endpoint}.log
                 echo ${throughput} > ${RESULTS_DIR_J}/server_requests_thrpt-${TYPE}-${ITR}-${endpoint}.log
         fi
-
         ## Calculate rsp_time_rate and thrpt_rate
         if [ -s ${RESULTS_DIR_J}/server_requests_sum_rate_3m-${TYPE}-${ITR}-${endpoint}.log ]; then
                 app_sum_rate_3m=`cat ${RESULTS_DIR_J}/server_requests_sum_rate_3m-${TYPE}-${ITR}-${endpoint}.log`
@@ -100,7 +97,6 @@ function parsePromMetrics()  {
                 echo ${rsp_time_rate_3m} > ${RESULTS_DIR_J}/server_requests_rsp_time_rate_3m-${TYPE}-${ITR}-${endpoint}.log
                 echo ${throughput_rate_3m} > ${RESULTS_DIR_J}/server_requests_thrpt_rate_3m-${TYPE}-${ITR}-${endpoint}.log
         fi
-
 	if [ -s ${RESULTS_DIR_J}/server_requests_sum_rate-${TYPE}-${ITR}-${endpoint}.log ]; then
                 app_sum_rate=`cat ${RESULTS_DIR_J}/server_requests_sum_rate-${TYPE}-${ITR}-${endpoint}.log`
                 # Convert seconds to ms to avoid 0 as response time.
@@ -111,7 +107,6 @@ function parsePromMetrics()  {
                 echo ${rsp_time_rate} > ${RESULTS_DIR_J}/server_requests_rsp_time_rate-${TYPE}-${ITR}-${endpoint}.log
                 echo ${throughput_rate} > ${RESULTS_DIR_J}/server_requests_thrpt_rate-${TYPE}-${ITR}-${endpoint}.log
         fi
-
 
 	## Raw data
 	echo "${ITR}, ${throughput} , ${rsp_time} , ${throughput_rate} , ${rsp_time_rate} ${throughput_rate_3m} , ${rsp_time_rate_3m} " >> ${RESULTS_DIR_J}/../server_requests-metrics-${TYPE}-raw-${endpoint}.log
@@ -261,7 +256,6 @@ function parseResults() {
 		RESULTS_DIR_P=${RESULTS_DIR_J}/ITR-${itr}
 		parsePromMetrics warmup ${WARMUPS} ${itr}
 		parsePromMetrics measure ${MEASURES} ${itr}
-
 		for poddatalog in "${POD_CPU_LOGS[@]}"
 		do
 			if [ -s "${RESULTS_DIR_J}/${poddatalog}-measure-${itr}.log" ]; then
@@ -306,7 +300,6 @@ function parseResults() {
 	###### Add different raw logs we want to merge
 	#Cumulative raw data
 	paste ${RESULTS_DIR_J}/cpu-measure-raw.log ${RESULTS_DIR_J}/mem-measure-raw.log >> ${RESULTS_DIR_J}/../Metrics-cpumem-raw.log
-
 	for metric in "${TOTAL_LOGS[@]}"
 	do
 		for endpoint in "${ENDPOINTS[@]}"
@@ -320,7 +313,7 @@ function parseResults() {
 				eval total_${metric}=0
 			fi
 		elif [ ${metric} == "cpu_max" ] || [ ${metric} == "mem_max" ]; then
-			maxval=$(echo `calcMax ${RESULTS_DIR_J}/${metric}-measure-temp.log}`)
+			maxval=$(echo `calcMax ${RESULTS_DIR_J}/${metric}-measure-temp.log`)
                         if [ ! -z ${maxval} ]; then
                                 eval total_${metric}=${maxval}
                         else
@@ -348,7 +341,6 @@ function parseResults() {
 			else
 				eval ci_${metric}=0
 			fi
-
 		## Convert http_seconds into ms
                 if [ ${metric} == "server_requests_max" ]; then
 			total_server_requests_ms_max=$(echo ${total_server_requests_max}*1000 | bc -l)
@@ -423,7 +415,6 @@ if [ ! -z ${agg_throughput} ]; then
 else
 	composite_throughput=0
 fi
-
 echo "${composite_throughput} , " >> ${RESULTS_DIR_J}/../Metrics-composite-prom.log
 echo "${total_cpu_avg} , ${total_mem_avg} , ${total_cpu_min} , ${total_cpu_max} , ${total_mem_min} , ${total_mem_max} , " >> ${RESULTS_DIR_J}/../Metrics-cpumem-prom.log
 
