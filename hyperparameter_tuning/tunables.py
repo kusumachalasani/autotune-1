@@ -74,7 +74,7 @@ def get_all_tunables():
                         '"value_type": "categorical", "choices": ["true", "false"]}, {"name": "StackTraceInThrowable", ' \
 			'"value_type": "categorical", "choices": ["true", "false"]}, {"name": "checkBounds", ' \
 			'"value_type": "categorical", "choices": ["true", "false"]}, {"name": "httpiothreads", ' \
-			'"value_type": "integer", "upper_bound": 4, "lower_bound": 0, "step": 1}]} '
+			'"value_type": "integer", "upper_bound": 4, "lower_bound": 1, "step": 1}]} '
 
     search_space = json.loads(search_space_json)
     id = search_space["id"]
