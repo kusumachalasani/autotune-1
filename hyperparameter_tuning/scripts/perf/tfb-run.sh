@@ -389,7 +389,7 @@ function run_wrk_workload() {
 	## Get all prometheus query data
 	${SCRIPT_REPO}/perf/getappmetrics-promql.sh ${TYPE}-${RUN} ${CPU_MEM_DURATION} ${RESULTS_DIR_W} ${BENCHMARK_SERVER} ${APP_NAME} ${CLUSTER_TYPE} &
 	metrics_pid=$!
-
+	sleep 2
 	${HYPERFOIL_DIR}/wrk.sh --latency --threads=${THREAD} --connections=${CONNECTIONS} --duration=${DURATION}s http://${IP_ADDR}/db > ${RESULTS_LOG}-db.log
 	sleep 2
 	${HYPERFOIL_DIR}/wrk.sh --latency --threads=${THREAD} --connections=${CONNECTIONS} --duration=${DURATION}s http://${IP_ADDR}/json > ${RESULTS_LOG}-json.log
@@ -580,12 +580,14 @@ done
 sleep 10
 echo " "
 # Display the Metrics log file
-paste ${RESULTS_DIR_ROOT}/Metrics-composite-prom.log ${RESULTS_DIR_ROOT}/Metrics-composite-wrk.log ${RESULTS_DIR_ROOT}/Metrics-cpumem-prom.log ${RESULTS_DIR_ROOT}/Metrics-config.log ${RESULTS_DIR_ROOT}/deploy-config.log
- 
-paste ${RESULTS_DIR_ROOT}/Metrics-db-wrk.log ${RESULTS_DIR_ROOT}/Metrics-json-wrk.log ${RESULTS_DIR_ROOT}/Metrics-fortunes-wrk.log ${RESULTS_DIR_ROOT}/Metrics-plaintext-wrk.log ${RESULTS_DIR_ROOT}/Metrics-queries-wrk.log ${RESULTS_DIR_ROOT}/Metrics-updates-wrk.log
+paste ${RESULTS_DIR_ROOT}/Metrics-composite-prom.log ${RESULTS_DIR_ROOT}/Metrics-composite-wrk.log ${RESULTS_DIR_ROOT}/Metrics-cpumem-prom.log ${RESULTS_DIR_ROOT}/Metrics-db-wrk.log ${RESULTS_DIR_ROOT}/Metrics-json-wrk.log ${RESULTS_DIR_ROOT}/Metrics-fortunes-wrk.log ${RESULTS_DIR_ROOT}/Metrics-plaintext-wrk.log ${RESULTS_DIR_ROOT}/Metrics-queries-wrk.log ${RESULTS_DIR_ROOT}/Metrics-updates-wrk.log ${RESULTS_DIR_ROOT}/Metrics-db-prom.log ${RESULTS_DIR_ROOT}/Metrics-json-prom.log ${RESULTS_DIR_ROOT}/Metrics-fortunes-prom.log ${RESULTS_DIR_ROOT}/Metrics-plaintext-prom.log ${RESULTS_DIR_ROOT}/Metrics-queries-prom.log ${RESULTS_DIR_ROOT}/Metrics-updates-prom.log ${RESULTS_DIR_ROOT}/Metrics-config.log ${RESULTS_DIR_ROOT}/deploy-config.log
 
-paste ${RESULTS_DIR_ROOT}/Metrics-db-prom.log ${RESULTS_DIR_ROOT}/Metrics-json-prom.log ${RESULTS_DIR_ROOT}/Metrics-fortunes-prom.log ${RESULTS_DIR_ROOT}/Metrics-plaintext-prom.log ${RESULTS_DIR_ROOT}/Metrics-queries-prom.log ${RESULTS_DIR_ROOT}/Metrics-updates-prom.log
+#paste ${RESULTS_DIR_ROOT}/Metrics-composite-prom.log ${RESULTS_DIR_ROOT}/Metrics-composite-wrk.log ${RESULTS_DIR_ROOT}/Metrics-cpumem-prom.log ${RESULTS_DIR_ROOT}/Metrics-config.log ${RESULTS_DIR_ROOT}/deploy-config.log
+ 
+#paste ${RESULTS_DIR_ROOT}/Metrics-db-wrk.log ${RESULTS_DIR_ROOT}/Metrics-json-wrk.log ${RESULTS_DIR_ROOT}/Metrics-fortunes-wrk.log ${RESULTS_DIR_ROOT}/Metrics-plaintext-wrk.log ${RESULTS_DIR_ROOT}/Metrics-queries-wrk.log ${RESULTS_DIR_ROOT}/Metrics-updates-wrk.log
+
+#paste ${RESULTS_DIR_ROOT}/Metrics-db-prom.log ${RESULTS_DIR_ROOT}/Metrics-json-prom.log ${RESULTS_DIR_ROOT}/Metrics-fortunes-prom.log ${RESULTS_DIR_ROOT}/Metrics-plaintext-prom.log ${RESULTS_DIR_ROOT}/Metrics-queries-prom.log ${RESULTS_DIR_ROOT}/Metrics-updates-prom.log
 
 #paste ${RESULTS_DIR_ROOT}/Metrics-quantiles-prom.log
 
-paste ${RESULTS_DIR_ROOT}/Metrics-prom.log ${RESULTS_DIR_ROOT}/Metrics-db-wrk.log ${RESULTS_DIR_ROOT}/deploy-config.log > ${RESULTS_DIR_ROOT}/output.csv
+#paste ${RESULTS_DIR_ROOT}/Metrics-prom.log ${RESULTS_DIR_ROOT}/Metrics-db-wrk.log ${RESULTS_DIR_ROOT}/deploy-config.log > ${RESULTS_DIR_ROOT}/output.csv
