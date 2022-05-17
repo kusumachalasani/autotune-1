@@ -42,7 +42,7 @@ def get_all_tunables():
     search_space_json = '{"id": "auto123", "application_name": "tfb-qrh-deployment-6d4c8678d4-jmz8x", ' \
                         '"objective_function": "transaction_response_time", "value_type": "double", "direction": ' \
                         '"maximize", "hpo_algo_impl": "optuna_tpe", "tunables": [ {"name": "gcpolicy", ' \
-                        '"value_type": "categorical", "choices": ["UseG1GC", "UseParallelGC", "UseSerialGC", "UseShenandoahGC", "UseZGC"]}, {"name": "quarkusthreadpoolcorethreads", ' \
+                        '"value_type": "categorical", "choices": ["UseG1GC", "UseParallelGC", "UseSerialGC", "UseShenandoahGC"]}, {"name": "quarkusthreadpoolcorethreads", ' \
                         '"value_type": "integer", "upper_bound": 33, "lower_bound": 1, "step": 4}, {"name": "quarkusthreadpoolqueuesize", ' \
                         '"value_type": "integer", "upper_bound": 10000, "lower_bound": 0, "step": 10}, {"name": "quarkusdatasourcejdbcminsize", ' \
                         '"value_type": "integer", "upper_bound": 12, "lower_bound": 1, "step": 1}, {"name": "quarkusdatasourcejdbcmaxsize", ' \
