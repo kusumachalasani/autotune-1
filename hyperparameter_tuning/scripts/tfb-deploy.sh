@@ -330,7 +330,7 @@ function createInstances() {
 				elif [ ${qtunable} == "quarkusdatasourcejdbcmaxsize" ]; then
                                         OPTIONS_VAR="${OPTIONS_VAR} -Dquarkus.datasource.jdbc.max-size=${!qtunable}"
 				elif [ ${qtunable} == "httpiothreads" ]; then
-					if [ ${!qtunable} == "true"
+					if [ ${!qtunable} == "true" ]; then
                                         	OPTIONS_VAR="${OPTIONS_VAR} -Dquarkus.http.io-threads=${CPU_REQ%.*}"
 					fi
 				fi
