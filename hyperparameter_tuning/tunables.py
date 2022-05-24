@@ -41,20 +41,20 @@ def get_all_tunables():
     #                    '"value_type": "integer", "upper_bound": 4096, "lower_bound": 270, "step": 1} ,
     search_space_json = '{"id": "auto123", "application_name": "tfb-qrh-deployment-6d4c8678d4-jmz8x", ' \
                         '"objective_function": "transaction_response_time", "value_type": "double", "direction": ' \
-                        '"maximize", "hpo_algo_impl": "optuna_tpe", "tunables": [ {"name": "gcpolicy", ' \
+                        '"maximize", "hpo_algo_impl": "optuna_tpe_multivariate", "tunables": [ {"name": "gcpolicy", ' \
                         '"value_type": "categorical", "choices": ["UseG1GC", "UseParallelGC", "UseSerialGC", "UseShenandoahGC"]}, {"name": "quarkusthreadpoolcorethreads", ' \
-                        '"value_type": "integer", "upper_bound": 33, "lower_bound": 1, "step": 4}, {"name": "quarkusthreadpoolqueuesize", ' \
-                        '"value_type": "integer", "upper_bound": 10000, "lower_bound": 0, "step": 10}, {"name": "quarkusdatasourcejdbcminsize", ' \
+                        '"value_type": "integer", "upper_bound": 33, "lower_bound": 1, "step": 1}, {"name": "quarkusthreadpoolqueuesize", ' \
+                        '"value_type": "integer", "upper_bound": 10000, "lower_bound": 0, "step": 50}, {"name": "quarkusdatasourcejdbcminsize", ' \
                         '"value_type": "integer", "upper_bound": 12, "lower_bound": 1, "step": 1}, {"name": "quarkusdatasourcejdbcmaxsize", ' \
                         '"value_type": "integer", "upper_bound": 90, "lower_bound": 12, "step": 1}, {"name": "FreqInlineSize", ' \
-                        '"value_type": "integer", "upper_bound": 500, "lower_bound": 325, "step": 1}, {"name": "MaxInlineLevel", ' \
+                        '"value_type": "integer", "upper_bound": 500, "lower_bound": 325, "step": 5}, {"name": "MaxInlineLevel", ' \
                         '"value_type": "integer", "upper_bound": 50, "lower_bound": 9, "step": 1}, {"name": "MinInliningThreshold", ' \
-                        '"value_type": "integer", "upper_bound": 200, "lower_bound": 0, "step": 1}, {"name": "CompileThreshold", ' \
-                        '"value_type": "integer", "upper_bound": 10000, "lower_bound": 1000, "step": 10}, {"name": "CompileThresholdScaling", ' \
+                        '"value_type": "integer", "upper_bound": 200, "lower_bound": 0, "step": 5}, {"name": "CompileThreshold", ' \
+                        '"value_type": "integer", "upper_bound": 10000, "lower_bound": 1000, "step": 50}, {"name": "CompileThresholdScaling", ' \
                         '"value_type": "double", "upper_bound": 15, "lower_bound": 1, "step": 0.1}, {"name": "ConcGCThreads", ' \
                         '"value_type": "integer", "upper_bound": 8, "lower_bound": 1, "step": 1}, {"name": "InlineSmallCode", ' \
-                        '"value_type": "integer", "upper_bound": 5000, "lower_bound": 500, "step": 1}, {"name": "LoopUnrollLimit", ' \
-                        '"value_type": "integer", "upper_bound": 250, "lower_bound": 20, "step": 1}, {"name": "LoopUnrollMin", ' \
+                        '"value_type": "integer", "upper_bound": 5000, "lower_bound": 500, "step": 20}, {"name": "LoopUnrollLimit", ' \
+                        '"value_type": "integer", "upper_bound": 250, "lower_bound": 20, "step": 2}, {"name": "LoopUnrollMin", ' \
                         '"value_type": "integer", "upper_bound": 20, "lower_bound": 0, "step": 1}, {"name": "MinSurvivorRatio", ' \
                         '"value_type": "integer", "upper_bound": 48, "lower_bound": 3, "step": 1}, {"name": "NewRatio", ' \
                         '"value_type": "integer", "upper_bound": 10, "lower_bound": 1, "step": 1}, {"name": "TieredStopAtLevel", ' \
