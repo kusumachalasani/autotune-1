@@ -161,6 +161,26 @@ public class AnalyzerConstants {
                         ),
                 }
         ),
+        DURATION_BASED_ONE(
+                KruizeConstants.JSONKeys.DURATION_BASED,
+                new DurationBasedOneRecommendationSubCategory[]{
+                        new DurationBasedOneRecommendationSubCategory(
+                                KruizeConstants.JSONKeys.SHORT_TERM,
+                                1,
+                                TimeUnit.DAYS
+                        ),
+                        new DurationBasedOneRecommendationSubCategory(
+                                KruizeConstants.JSONKeys.MEDIUM_TERM,
+                                7,
+                                TimeUnit.DAYS
+                        ),
+                        new DurationBasedOneRecommendationSubCategory(
+                                KruizeConstants.JSONKeys.LONG_TERM,
+                                15,
+                                TimeUnit.DAYS
+                        ),
+                }
+        ),
         // Need to update with profile based sub categories
         PROFILE_BASED(KruizeConstants.JSONKeys.PROFILE_BASED, null);
 
@@ -586,6 +606,7 @@ public class AnalyzerConstants {
             }
             public static String DEFAULT_NAME = "Default";
             public static String DURATION_BASED = "Duration Based";
+            public static String DURATION_BASED_ONE = "Duration Based One";
             public static String PROFILE_BASED = "Profile Based";
         }
 
@@ -595,6 +616,7 @@ public class AnalyzerConstants {
             }
 
             public static String DURATION_BASED_KEY = "duration_based";
+            public static String DURATION_BASED_ONE_KEY = "duration_based_one";
             public static String PROFILE_BASED_KEY = "profile_based";
         }
     }
