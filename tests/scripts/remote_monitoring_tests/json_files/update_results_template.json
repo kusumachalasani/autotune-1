@@ -2,8 +2,8 @@
   {
     "version": "{{version}}",
     "experiment_name": "{{experiment_name}}",
-    "interval_start_time": "{{interval_start_time}}",
-    "interval_end_time": "{{interval_end_time}}",
+    "start_timestamp": "{{start_timestamp}}",
+    "end_timestamp": "{{end_timestamp}}",
     "kubernetes_objects": [
       {
         "type": "{{kubernetes_obj_type}}",
@@ -108,3 +108,4 @@
     ]
   }
 ]
+

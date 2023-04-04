@@ -21,6 +21,7 @@ import com.autotune.analyzer.recommendations.algos.DurationBasedRecommendationSu
 import com.autotune.analyzer.recommendations.algos.RecommendationSubCategory;
 import com.autotune.utils.KruizeConstants;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -89,8 +90,6 @@ public class AnalyzerConstants {
     public static final String DEPLOYMENT_NAME = "name";
     public static final String SELECTOR = "selectorInfo";
     public static final String NULL = "null";
-    public static final String BULKUPLOAD_CREATEEXPERIMENT_LIMIT = "bulkupload_createexperiment_limit";
-    public static final String PERSISTANCE_STORAGE = "persistance_storage";
 
 
     private AnalyzerConstants() {
@@ -134,12 +133,6 @@ public class AnalyzerConstants {
         limits
     }
 
-    public enum PersistenceType {
-        LOCAL,              //Store only local  , Default
-        HYBRID,             //Store data both in db and local
-        DB                  //Store only DB
-    }
-
     public enum RecommendationCategory {
         DURATION_BASED(
                 KruizeConstants.JSONKeys.DURATION_BASED,
@@ -155,6 +148,26 @@ public class AnalyzerConstants {
                                 TimeUnit.DAYS
                         ),
                         new DurationBasedRecommendationSubCategory(
+                                KruizeConstants.JSONKeys.LONG_TERM,
+                                15,
+                                TimeUnit.DAYS
+                        ),
+                }
+        ),
+        DURATION_BASED1(
+                KruizeConstants.JSONKeys.DURATION_BASED,
+                new DurationBased1RecommendationSubCategory[]{
+                        new DurationBased1RecommendationSubCategory(
+                                KruizeConstants.JSONKeys.SHORT_TERM,
+                                1,
+                                TimeUnit.DAYS
+                        ),
+                        new DurationBased1RecommendationSubCategory(
+                                KruizeConstants.JSONKeys.MEDIUM_TERM,
+                                7,
+                                TimeUnit.DAYS
+                        ),
+                        new DurationBased1RecommendationSubCategory(
                                 KruizeConstants.JSONKeys.LONG_TERM,
                                 15,
                                 TimeUnit.DAYS
@@ -182,10 +195,10 @@ public class AnalyzerConstants {
     }
 
     public enum RecommendationNotificationTypes {
-        INFO("info", 1),
-        WARN("warning", 2),
-        ERROR("error", 3),
-        CRITICAL("critical", 4);
+        INFO ("info", 1),
+        WARN ("warning", 2),
+        ERROR ("error", 3),
+        CRITICAL ("critical", 4);
 
         private String name;
         private int severity;
@@ -213,15 +226,6 @@ public class AnalyzerConstants {
         memoryLimit,
         memoryUsage,
         memoryRSS
-    }
-
-    public enum K8S_OBJECT_TYPES {
-        DEPLOYMENT,
-        DEPLOYMENT_CONFIG,
-        STATEFULSET,
-        REPLICASET,
-        REPLICATION_CONTROLLER,
-        DAEMONSET,
     }
 
     /**
@@ -515,25 +519,38 @@ public class AnalyzerConstants {
         );
     }
 
+    public enum K8S_OBJECT_TYPES {
+        DEPLOYMENT,
+        DEPLOYMENT_CONFIG,
+        STATEFULSET,
+        REPLICASET,
+        REPLICATION_CONTROLLER,
+        DAEMONSET,
+    }
+
     public static final class K8sObjectConstants {
         private K8sObjectConstants() {
 
         }
-
         public static final class Types {
+            private Types() {
+
+            }
+
             public static final String DEPLOYMENT = "deployment";
             public static final String DEPLOYMENT_CONFIG = "deploymentConfig";
             public static final String STATEFULSET = "statefulset";
             public static final String REPLICASET = "replicaset";
             public static final String REPLICATION_CONTROLLER = "replicationController";
             public static final String DAEMONSET = "daemonset";
-            private Types() {
-
-            }
         }
     }
 
     public static final class MetricNameConstants {
+        private MetricNameConstants() {
+
+        }
+
         public static final String CPU_REQUEST = "cpuRequest";
         public static final String CPU_LIMIT = "cpuLimit";
         public static final String CPU_USAGE = "cpuUsage";
@@ -542,32 +559,31 @@ public class AnalyzerConstants {
         public static final String MEMORY_LIMIT = "memoryLimit";
         public static final String MEMORY_USAGE = "memoryUsage";
         public static final String MEMORY_RSS = "memoryRSS";
-        private MetricNameConstants() {
-
-        }
 
     }
 
     public static final class RecommendationNotificationMsgConstant {
-        public static final String NOT_ENOUGH_DATA = "There is not enough data available to generate a recommendation.";
-        public static final String DURATION_BASED_AVAILABLE = "Duration Based Recommendations Available";
         private RecommendationNotificationMsgConstant() {
 
         }
+
+        public static final String NOT_ENOUGH_DATA = "There is not enough data available to generate a recommendation.";
+        public static final String DURATION_BASED_AVAILABLE = "Duration Based Recommendations Available";
     }
 
     public static final class BooleanString {
-        public static final String TRUE_DEFAULT = "True";
-        public static final String FALSE_DEFAULT = "False";
-        public static final String TRUE_LOWER = TRUE_DEFAULT.toLowerCase();
-        public static final String TRUE = TRUE_LOWER;
-        public static final String FALSE_LOWER = FALSE_DEFAULT.toLowerCase();
-        public static final String FALSE = FALSE_LOWER;
-        public static final String TRUE_UPPER = TRUE_DEFAULT.toUpperCase();
-        public static final String FALSE_UPPER = FALSE_DEFAULT.toUpperCase();
         private BooleanString() {
 
         }
+
+        public static final String TRUE_DEFAULT = "True";
+        public static final String FALSE_DEFAULT = "False";
+        public static final String TRUE_LOWER = TRUE_DEFAULT.toLowerCase();
+        public static final String FALSE_LOWER = FALSE_DEFAULT.toLowerCase();
+        public static final String TRUE_UPPER = TRUE_DEFAULT.toUpperCase();
+        public static final String FALSE_UPPER = FALSE_DEFAULT.toUpperCase();
+        public static final String TRUE = TRUE_LOWER;
+        public static final String FALSE = FALSE_LOWER;
     }
 
     public enum RegisterRecommendationEngineStatus {
@@ -586,6 +602,7 @@ public class AnalyzerConstants {
             }
             public static String DEFAULT_NAME = "Default";
             public static String DURATION_BASED = "Duration Based";
+            public static String DURATION_BASED1 = "Duration Based1";
             public static String PROFILE_BASED = "Profile Based";
         }
 

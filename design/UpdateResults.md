@@ -7,9 +7,9 @@ tuned.
 
 * experiment_name \
   A unique string name is specified for identifying individual experiments.
-* interval_start_time \
+* start_timestamp \
   Stay tuned
-* interval_end_time \
+* end_timestamp \
   Stay tuned
 * kubernetes_objects \
   Stay tuned

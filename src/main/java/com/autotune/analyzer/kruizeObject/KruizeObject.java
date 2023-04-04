@@ -16,11 +16,10 @@
 package com.autotune.analyzer.kruizeObject;
 
 import com.autotune.analyzer.exceptions.InvalidValueException;
-import com.autotune.analyzer.utils.AnalyzerConstants;
 import com.autotune.common.data.ValidationOutputData;
 import com.autotune.common.data.result.ExperimentResultData;
-import com.autotune.common.k8sObjects.K8sObject;
-import com.autotune.common.k8sObjects.TrialSettings;
+import com.autotune.analyzer.utils.AnalyzerConstants;
+import com.autotune.common.k8sObjects.*;
 import com.autotune.utils.KruizeSupportedTypes;
 import com.autotune.utils.Utils;
 import com.google.gson.annotations.SerializedName;
@@ -73,7 +72,7 @@ public final class KruizeObject {
                         SelectorInfo selectorInfo,
                         String performanceProfile,
                         ObjectReference objectReference
-    ) throws InvalidValueException {
+                        ) throws InvalidValueException {
 
         HashMap<String, Object> map = new HashMap<>();
         map.put(AnalyzerConstants.AutotuneObjectConstants.NAME, experimentName);
@@ -254,7 +253,6 @@ public final class KruizeObject {
     public void setNamespace(String namespace) {
         this.namespace = namespace;
     }
-
 
     @Override
     public String toString() {

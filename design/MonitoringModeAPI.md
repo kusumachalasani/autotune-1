@@ -67,12 +67,6 @@ see [Create Experiment](/design/CreateExperiment.md)
 
 Update metric results using input JSON as follows. For a more detailed guide,
 see [Update results](/design/UpdateResults.md)
-
-**NOTE:** The update to results of a particular experiment should follow Time Series Order to get valid recommendations.
-
-**Eg:** after updating the results for time stamp `2022-01-23T18:25:43.511Z` you cannot add results previous to that timestamp
-
-
 * Mandatory parameters in the input JSON:
  ```
  cpuUsage, memoryUsage, memoryRSS
@@ -89,8 +83,8 @@ see [Update results](/design/UpdateResults.md)
   {
     "version": "1.0",
     "experiment_name": "quarkus-resteasy-autotune-min-http-response-time-db",
-    "interval_start_time": "2022-01-23T18:25:43.511Z",
-    "interval_end_time": "2022-01-23T18:40:43.602Z",
+    "start_timestamp": "2022-01-23T18:25:43.511Z",
+    "end_timestamp": "2022-01-23T18:25:43.511Z",
     "kubernetes_objects": [
       {
         "type": "deployment",

@@ -45,6 +45,7 @@ public class ResourceOptimizationOpenshiftImpl extends PerfProfileImpl {
         kruizeRecommendationEngineList = new ArrayList<KruizeRecommendationEngine>();
         // Create Duration based engine
         DurationBasedRecommendationEngine durationBasedRecommendationEngine =  new DurationBasedRecommendationEngine();
+        DurationBased1RecommendationEngine durationBased1RecommendationEngine =  new DurationBased1RecommendationEngine();
         // TODO: Create profile based engine
         AnalyzerConstants.RegisterRecommendationEngineStatus _unused_status = registerEngine(durationBasedRecommendationEngine);
         // TODO: Add profile based once recommendation algos are available

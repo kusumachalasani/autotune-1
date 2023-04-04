@@ -16,17 +16,14 @@
 
 package com.autotune.analyzer.services;
 
+import com.autotune.analyzer.serviceObjects.Converters;
+import com.autotune.operator.KruizeOperator;
 import com.autotune.analyzer.exceptions.KruizeResponse;
+import com.autotune.analyzer.serviceObjects.CreateExperimentAPIObject;
 import com.autotune.analyzer.experiment.ExperimentInitiator;
 import com.autotune.analyzer.kruizeObject.KruizeObject;
-import com.autotune.analyzer.serviceObjects.Converters;
-import com.autotune.analyzer.serviceObjects.CreateExperimentAPIObject;
 import com.autotune.analyzer.utils.AnalyzerConstants;
 import com.autotune.analyzer.utils.AnalyzerErrorConstants;
-import com.autotune.common.data.ValidationOutputData;
-import com.autotune.database.dao.ExperimentDAO;
-import com.autotune.database.dao.ExperimentDAOImpl;
-import com.autotune.operator.KruizeOperator;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +83,7 @@ public class CreateExperiment extends HttpServlet {
             // check for bulk entries and respond accordingly
             if (createExperimentAPIObjects.size() > 1) {
                 LOGGER.error(AnalyzerErrorConstants.AutotuneObjectErrors.UNSUPPORTED_EXPERIMENT);
-                sendErrorResponse(response, null, HttpServletResponse.SC_BAD_REQUEST, AnalyzerErrorConstants.AutotuneObjectErrors.UNSUPPORTED_EXPERIMENT);
+                sendErrorResponse(response, null, HttpServletResponse.SC_BAD_REQUEST, AnalyzerErrorConstants.AutotuneObjectErrors.UNSUPPORTED_EXPERIMENT );
             } else {
                 List<KruizeObject> kruizeExpList = new ArrayList<>();
                 for (CreateExperimentAPIObject createExperimentAPIObject : createExperimentAPIObjects) {
@@ -98,16 +95,7 @@ public class CreateExperiment extends HttpServlet {
                 //TODO: UX needs to be modified - Handle response for the multiple objects
                 KruizeObject invalidKruizeObject = kruizeExpList.stream().filter((ko) -> (!ko.getValidationData().isSuccess())).findAny().orElse(null);
                 if (null == invalidKruizeObject) {
-                    ValidationOutputData addedToDB = null;  // TODO bulk upload not considered here
-                    for (KruizeObject ko : kruizeExpList) {
-                        ExperimentDAO experimentDAO = new ExperimentDAOImpl();
-                        addedToDB = experimentDAO.addExperimentToDB(ko);
-                    }
-                    if (addedToDB.isSuccess())
-                        sendSuccessResponse(response, "Experiment registered successfully with Kruize.");
-                    else {
-                        sendErrorResponse(response, null, HttpServletResponse.SC_BAD_REQUEST, addedToDB.getMessage());
-                    }
+                    sendSuccessResponse(response, "Experiment registered successfully with Kruize.");
                 } else {
                     LOGGER.error("Failed to create experiment: {}", invalidKruizeObject.getValidationData().getMessage());
                     sendErrorResponse(response, null, invalidKruizeObject.getValidationData().getErrorCode(), invalidKruizeObject.getValidationData().getMessage());
