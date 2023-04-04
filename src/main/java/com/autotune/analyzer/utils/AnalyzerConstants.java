@@ -18,6 +18,7 @@ package com.autotune.analyzer.utils;
 import com.autotune.analyzer.performanceProfiles.PerformanceProfileInterface.DefaultImpl;
 import com.autotune.analyzer.performanceProfiles.PerformanceProfileInterface.ResourceOptimizationOpenshiftImpl;
 import com.autotune.analyzer.recommendations.algos.DurationBasedRecommendationSubCategory;
+import com.autotune.analyzer.recommendations.algos.DurationBasedOneRecommendationSubCategory;
 import com.autotune.analyzer.recommendations.algos.RecommendationSubCategory;
 import com.autotune.utils.KruizeConstants;
 
