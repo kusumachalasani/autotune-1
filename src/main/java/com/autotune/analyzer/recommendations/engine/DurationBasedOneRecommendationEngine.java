@@ -18,7 +18,7 @@ package com.autotune.analyzer.recommendations.engine;
 import com.autotune.analyzer.recommendations.Recommendation;
 import com.autotune.analyzer.recommendations.RecommendationConfigItem;
 import com.autotune.analyzer.recommendations.RecommendationNotification;
-import com.autotune.analyzer.recommendations.algos.DurationBasedRecommendationSubCategory;
+import com.autotune.analyzer.recommendations.algos.DurationBasedOneRecommendationSubCategory;
 import com.autotune.analyzer.recommendations.algos.RecommendationSubCategory;
 import com.autotune.analyzer.utils.AnalyzerConstants;
 import com.autotune.common.data.result.ContainerData;
@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class DurationBasedOneRecommendationEngine implements KruizeRecommendationEngine{
-    private static final Logger LOGGER = LoggerFactory.getLogger(DurationBasedOneRecommendationOneEngine.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DurationBasedOneRecommendationEngine.class);
     private String name;
     private String key;
     private AnalyzerConstants.RecommendationCategory category;
@@ -71,9 +71,9 @@ public class DurationBasedOneRecommendationEngine implements KruizeRecommendatio
         Timestamp minDate = resultsMap.keySet().stream().min(Timestamp::compareTo).get();
         HashMap<String, Recommendation> resultRecommendation = new HashMap<String, Recommendation>();
         for (RecommendationSubCategory recommendationSubCategory : recommendationCategory.getRecommendationSubCategories()) {
-            DurationBasedRecommendationSubCategory durationBasedRecommendationSubCategory = (DurationBasedRecommendationSubCategory) recommendationSubCategory;
-            String recPeriod = durationBasedRecommendationSubCategory.getSubCategory();
-            int days = durationBasedRecommendationSubCategory.getDuration();
+            DurationBasedOneRecommendationSubCategory durationBasedOneRecommendationSubCategory = (DurationBasedOneRecommendationSubCategory) recommendationSubCategory;
+            String recPeriod = durationBasedOneRecommendationSubCategory.getSubCategory();
+            int days = durationBasedOneRecommendationSubCategory.getDuration();
             Timestamp monitorStartDate = CommonUtils.addDays(monitoringEndTime, -1 * days);
             if (monitorStartDate.compareTo(minDate) >= 0 || days == 1) {
                 Timestamp finalMonitorStartDate = monitorStartDate;
