@@ -19,6 +19,7 @@ import com.autotune.analyzer.kruizeObject.KruizeObject;
 import com.autotune.analyzer.recommendations.ContainerRecommendations;
 import com.autotune.analyzer.recommendations.Recommendation;
 import com.autotune.analyzer.recommendations.RecommendationNotification;
+import com.autotune.analyzer.recommendations.engine.DurationBasedOneRecommendationEngine;
 import com.autotune.analyzer.utils.AnalyzerConstants;
 import com.autotune.analyzer.recommendations.engine.DurationBasedRecommendationEngine;
 import com.autotune.analyzer.recommendations.engine.KruizeRecommendationEngine;
