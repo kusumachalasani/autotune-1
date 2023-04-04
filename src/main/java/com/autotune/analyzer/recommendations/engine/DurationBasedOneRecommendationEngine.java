@@ -42,6 +42,7 @@ public class DurationBasedOneRecommendationEngine implements KruizeRecommendatio
     public DurationBasedOneRecommendationEngine() {
         this.name = AnalyzerConstants.RecommendationEngine.EngineNames.DURATION_BASED_ONE;
         this.key = AnalyzerConstants.RecommendationEngine.EngineKeys.DURATION_BASED_ONE_KEY;
+        this.category = AnalyzerConstants.RecommendationCategory.DURATION_BASED_ONE;
     }
 
     public DurationBasedOneRecommendationEngine(String name) {
@@ -66,11 +67,10 @@ public class DurationBasedOneRecommendationEngine implements KruizeRecommendatio
     @Override
     public HashMap<String, Recommendation> getRecommendations(ContainerData containerData, Timestamp monitoringEndTime) {
         // TODO: Needs to be implemented
-        AnalyzerConstants.RecommendationCategory recommendationCategory = AnalyzerConstants.RecommendationCategory.DURATION_BASED;
         HashMap<Timestamp, IntervalResults> resultsMap = containerData.getResults();
         Timestamp minDate = resultsMap.keySet().stream().min(Timestamp::compareTo).get();
         HashMap<String, Recommendation> resultRecommendation = new HashMap<String, Recommendation>();
-        for (RecommendationSubCategory recommendationSubCategory : recommendationCategory.getRecommendationSubCategories()) {
+        for (RecommendationSubCategory recommendationSubCategory : this.category.getRecommendationSubCategories()) {
             DurationBasedOneRecommendationSubCategory durationBasedOneRecommendationSubCategory = (DurationBasedOneRecommendationSubCategory) recommendationSubCategory;
             String recPeriod = durationBasedOneRecommendationSubCategory.getSubCategory();
             int days = durationBasedOneRecommendationSubCategory.getDuration();
