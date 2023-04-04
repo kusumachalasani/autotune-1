@@ -163,7 +163,7 @@ public class AnalyzerConstants {
                 }
         ),
         DURATION_BASED_ONE(
-                KruizeConstants.JSONKeys.DURATION_BASED,
+                "duration_based_one",
                 new DurationBasedOneRecommendationSubCategory[]{
                         new DurationBasedOneRecommendationSubCategory(
                                 KruizeConstants.JSONKeys.SHORT_TERM,
