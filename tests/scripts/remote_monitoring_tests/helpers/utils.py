@@ -411,13 +411,13 @@ def match_metrics(output_metrics):
         api_name = match[1]
         http_method = match[2]
         value = float(match[3])
-        match_metrics.append('API', metric_type, api_name, http_method, value)
+        match_metrics.append(('API', metric_type, api_name, http_method, value))
 
     for match in db_matches:
         metric_type = match[0]
         method = match[1]
         value = float(match[2])
-        match_metrics.append('DB', metric_type, method, None, value)
+        match_metrics.append(('DB', metric_type, method, None, value))
 
     metrics = []
     for metric in match_metrics:
