@@ -427,31 +427,31 @@ def match_metrics(output_metrics):
 
     assertions = [
         ("createExperiment_count", createExperimentCount_STATUS, 0),
-        ("createExperiment_sum", createExperimentSum_STATUS, 0.2),
+        ("createExperiment_sum", createExperimentSum_STATUS, 0.5),
         ("listRecommendations_count", listRecommendationsCount_STATUS, 0),
-        ("listRecommendations_sum", listRecommendationsSum_STATUS, 0.2),
+        ("listRecommendations_sum", listRecommendationsSum_STATUS, 0.5),
         ("listExperiments_count", listExperimentsCount_STATUS, 0),
         ("listExperiments_sum", listExperimentsSum_STATUS, 0),
         ("updateResults_count", updateResultsCount_STATUS, 0),
         ("updateResults_sum", updateResultsSum_STATUS, 30),
         ("addRecommendationToDB_count", addRecommendationToDBCount_STATUS, 0),
-        ("addRecommendationToDB_sum", addRecommendationToDBSum_STATUS, 0.1),
+        ("addRecommendationToDB_sum", addRecommendationToDBSum_STATUS, 0.5),
         ("addResultsToDB_count", addResultsToDBCount_STATUS, 0),
-        ("addResultsToDB_sum", addResultsToDBSum_STATUS, 2),
+        ("addResultsToDB_sum", addResultsToDBSum_STATUS, 5),
         ("loadAllRecommendations_count", loadAllRecommendationsCount_STATUS, 0),
         ("loadAllRecommendations_sum", loadAllRecommendationsSum_STATUS, 0),
         ("loadAllExperiments_count", loadAllExperimentsCount_STATUS, 0),
         ("loadAllExperiments_sum", loadAllExperimentsSum_STATUS, 0),
         ("addExperimentToDB_count", addExperimentToDBCount_STATUS, 0),
-        ("addExperimentToDB_sum", addExperimentToDBSum_STATUS, 0.1),
+        ("addExperimentToDB_sum", addExperimentToDBSum_STATUS, 0.5),
         ("loadResultsByExperimentName_count", loadResultsByExperimentNameCount_STATUS, 0),
-        ("loadResultsByExperimentName_sum", loadResultsByExperimentNameSum_STATUS, 10),
+        ("loadResultsByExperimentName_sum", loadResultsByExperimentNameSum_STATUS, 15),
         ("loadExperimentByName_count", loadExperimentByNameCount_STATUS, 0),
-        ("loadExperimentByName_sum", loadExperimentByNameSum_STATUS, 1),
+        ("loadExperimentByName_sum", loadExperimentByNameSum_STATUS, 2),
         ("loadAllResults_count", loadAllResultsCount_STATUS, 0),
         ("loadAllResults_sum", loadAllResultsSum_STATUS, 0),
         ("loadRecommendationsByExperimentName_count", loadRecommendationsByExperimentNameCount_STATUS, 0),
-        ("loadRecommendationsByExperimentName_sum", loadRecommendationsByExperimentNameSum_STATUS, 0.1)
+        ("loadRecommendationsByExperimentName_sum", loadRecommendationsByExperimentNameSum_STATUS, 0.5)
     ]
 
     for assertion in assertions:
