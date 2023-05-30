@@ -302,8 +302,8 @@ def validate_kubernetes_obj(create_exp_kubernetes_obj, update_results_kubernetes
         list_reco_containers_length = len(list_reco_kubernetes_obj["containers"])
 
         # Validate the count of containers
-        #assert list_reco_containers_length == exp_containers_length, \
-        #    f"list reco containers size not same as update results containers size - list_reco = {list_reco_containers_length} \
+        assert list_reco_containers_length == exp_containers_length, \
+            f"list reco containers size not same as update results containers size - list_reco = {list_reco_containers_length} \
               create_exp = {exp_containers_length}"
 
     # Validate if all the containers are present
