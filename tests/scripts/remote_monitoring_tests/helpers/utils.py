@@ -471,4 +471,5 @@ def match_metrics(output_metrics):
             metric_value = float(found_metric.split("Value:")[-1].strip())
             status_value = float(status_string.split("Value:")[-1].strip())
             assert abs(metric_value - status_value) <= tolerance, f"{variable_name} assertion failed"
+            assert abs(metric_value - status_value) <= tolerance, f"{variable_name} assertion failed. Expected: {status_value}, Actual: {metric_value}, Tolerance: {tolerance}"
 
