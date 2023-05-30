@@ -1,0 +1,151 @@
+# HELP kruizeDB_seconds_max Time taken for KruizeDB methods
+# TYPE kruizeDB_seconds_max gauge
+kruizeDB_seconds_max{application="Kruize",method="addRecommendationToDB",} 0.034446332
+kruizeDB_seconds_max{application="Kruize",method="addResultsToDB",} 0.096605333
+kruizeDB_seconds_max{application="Kruize",method="loadAllRecommendations",} 0.0
+kruizeDB_seconds_max{application="Kruize",method="loadAllExperiments",} 0.0
+kruizeDB_seconds_max{application="Kruize",method="addExperimentToDB",} 0.002367648
+kruizeDB_seconds_max{application="Kruize",method="loadResultsByExperimentName",} 0.076846648
+kruizeDB_seconds_max{application="Kruize",method="loadExperimentByName",} 0.018435963
+kruizeDB_seconds_max{application="Kruize",method="loadAllResults",} 0.0
+kruizeDB_seconds_max{application="Kruize",method="loadRecommendationsByExperimentName",} 0.002415547
+# HELP kruizeDB_seconds Time taken for KruizeDB methods
+# TYPE kruizeDB_seconds summary
+kruizeDB_seconds_count{application="Kruize",method="addRecommendationToDB",} 50.0
+kruizeDB_seconds_sum{application="Kruize",method="addRecommendationToDB",} 0.165878261
+kruizeDB_seconds_count{application="Kruize",method="addResultsToDB",} 1000.0
+kruizeDB_seconds_sum{application="Kruize",method="addResultsToDB",} 3.951128463
+kruizeDB_seconds_count{application="Kruize",method="loadAllRecommendations",} 0.0
+kruizeDB_seconds_sum{application="Kruize",method="loadAllRecommendations",} 0.0
+kruizeDB_seconds_count{application="Kruize",method="loadAllExperiments",} 0.0
+kruizeDB_seconds_sum{application="Kruize",method="loadAllExperiments",} 0.0
+kruizeDB_seconds_count{application="Kruize",method="addExperimentToDB",} 10.0
+kruizeDB_seconds_sum{application="Kruize",method="addExperimentToDB",} 0.077194638
+kruizeDB_seconds_count{application="Kruize",method="loadResultsByExperimentName",} 1000.0
+kruizeDB_seconds_sum{application="Kruize",method="loadResultsByExperimentName",} 21.127551097
+kruizeDB_seconds_count{application="Kruize",method="loadExperimentByName",} 1031.0
+kruizeDB_seconds_sum{application="Kruize",method="loadExperimentByName",} 2.176267483
+kruizeDB_seconds_count{application="Kruize",method="loadAllResults",} 0.0
+kruizeDB_seconds_sum{application="Kruize",method="loadAllResults",} 0.0
+kruizeDB_seconds_count{application="Kruize",method="loadRecommendationsByExperimentName",} 11.0
+kruizeDB_seconds_sum{application="Kruize",method="loadRecommendationsByExperimentName",} 0.019519552
+# HELP kruizeAPI_seconds Time taken for Kruize APIs
+# TYPE kruizeAPI_seconds summary
+kruizeAPI_seconds_count{api="createExperiment",application="Kruize",method="POST",} 10.0
+kruizeAPI_seconds_sum{api="createExperiment",application="Kruize",method="POST",} 0.177825545
+kruizeAPI_seconds_count{api="listRecommendations",application="Kruize",method="GET",} 11.0
+kruizeAPI_seconds_sum{api="listRecommendations",application="Kruize",method="GET",} 0.179776004
+kruizeAPI_seconds_count{api="listExperiments",application="Kruize",method="GET",} 0.0
+kruizeAPI_seconds_sum{api="listExperiments",application="Kruize",method="GET",} 0.0
+kruizeAPI_seconds_count{api="updateResults",application="Kruize",method="POST",} 1000.0
+kruizeAPI_seconds_sum{api="updateResults",application="Kruize",method="POST",} 68.362386697
+# HELP kruizeAPI_seconds_max Time taken for Kruize APIs
+# TYPE kruizeAPI_seconds_max gauge
+kruizeAPI_seconds_max{api="createExperiment",application="Kruize",method="POST",} 0.005585667
+kruizeAPI_seconds_max{api="listRecommendations",application="Kruize",method="GET",} 0.022594858
+kruizeAPI_seconds_max{api="listExperiments",application="Kruize",method="GET",} 0.0
+kruizeAPI_seconds_max{api="updateResults",application="Kruize",method="POST",} 0.243482199
+
+
+
+============================
+
+
+# HELP kruizeDB_seconds_max Time taken for KruizeDB methods
+# TYPE kruizeDB_seconds_max gauge
+kruizeDB_seconds_max{application="Kruize",method="addRecommendationToDB",} 0.032728373
+kruizeDB_seconds_max{application="Kruize",method="addResultsToDB",} 0.014186016
+kruizeDB_seconds_max{application="Kruize",method="loadAllRecommendations",} 0.0
+kruizeDB_seconds_max{application="Kruize",method="loadAllExperiments",} 0.0
+kruizeDB_seconds_max{application="Kruize",method="addExperimentToDB",} 0.003888957
+kruizeDB_seconds_max{application="Kruize",method="loadResultsByExperimentName",} 0.058209724
+kruizeDB_seconds_max{application="Kruize",method="loadExperimentByName",} 0.056055453
+kruizeDB_seconds_max{application="Kruize",method="loadAllResults",} 0.0
+kruizeDB_seconds_max{application="Kruize",method="loadRecommendationsByExperimentName",} 0.003098947
+# HELP kruizeDB_seconds Time taken for KruizeDB methods
+# TYPE kruizeDB_seconds summary
+kruizeDB_seconds_count{application="Kruize",method="addRecommendationToDB",} 50.0
+kruizeDB_seconds_sum{application="Kruize",method="addRecommendationToDB",} 0.135503713
+kruizeDB_seconds_count{application="Kruize",method="addResultsToDB",} 1000.0
+kruizeDB_seconds_sum{application="Kruize",method="addResultsToDB",} 3.06644897
+kruizeDB_seconds_count{application="Kruize",method="loadAllRecommendations",} 0.0
+kruizeDB_seconds_sum{application="Kruize",method="loadAllRecommendations",} 0.0
+kruizeDB_seconds_count{application="Kruize",method="loadAllExperiments",} 0.0
+kruizeDB_seconds_sum{application="Kruize",method="loadAllExperiments",} 0.0
+kruizeDB_seconds_count{application="Kruize",method="addExperimentToDB",} 10.0
+kruizeDB_seconds_sum{application="Kruize",method="addExperimentToDB",} 0.060633165
+kruizeDB_seconds_count{application="Kruize",method="loadResultsByExperimentName",} 1000.0
+kruizeDB_seconds_sum{application="Kruize",method="loadResultsByExperimentName",} 17.193114396
+kruizeDB_seconds_count{application="Kruize",method="loadExperimentByName",} 1031.0
+kruizeDB_seconds_sum{application="Kruize",method="loadExperimentByName",} 1.742327178
+kruizeDB_seconds_count{application="Kruize",method="loadAllResults",} 0.0
+kruizeDB_seconds_sum{application="Kruize",method="loadAllResults",} 0.0
+kruizeDB_seconds_count{application="Kruize",method="loadRecommendationsByExperimentName",} 11.0
+kruizeDB_seconds_sum{application="Kruize",method="loadRecommendationsByExperimentName",} 0.019182557
+# HELP kruizeAPI_seconds Time taken for Kruize APIs
+# TYPE kruizeAPI_seconds summary
+kruizeAPI_seconds_count{api="createExperiment",application="Kruize",method="POST",} 10.0
+kruizeAPI_seconds_sum{api="createExperiment",application="Kruize",method="POST",} 0.130110059
+kruizeAPI_seconds_count{api="listRecommendations",application="Kruize",method="GET",} 11.0
+kruizeAPI_seconds_sum{api="listRecommendations",application="Kruize",method="GET",} 0.116731867
+kruizeAPI_seconds_count{api="listExperiments",application="Kruize",method="GET",} 0.0
+kruizeAPI_seconds_sum{api="listExperiments",application="Kruize",method="GET",} 0.0
+kruizeAPI_seconds_count{api="updateResults",application="Kruize",method="POST",} 1000.0
+kruizeAPI_seconds_sum{api="updateResults",application="Kruize",method="POST",} 54.783889808
+# HELP kruizeAPI_seconds_max Time taken for Kruize APIs
+# TYPE kruizeAPI_seconds_max gauge
+kruizeAPI_seconds_max{api="createExperiment",application="Kruize",method="POST",} 0.008103919
+kruizeAPI_seconds_max{api="listRecommendations",application="Kruize",method="GET",} 0.013119686
+kruizeAPI_seconds_max{api="listExperiments",application="Kruize",method="GET",} 0.0
+kruizeAPI_seconds_max{api="updateResults",application="Kruize",method="POST",} 0.304085529
+
+===========================
+
+
+# HELP kruizeAPI_seconds Time taken for Kruize APIs
+# TYPE kruizeAPI_seconds summary
+kruizeAPI_seconds_count{api="createExperiment",application="Kruize",method="POST",} 10.0
+kruizeAPI_seconds_sum{api="createExperiment",application="Kruize",method="POST",} 0.21929061
+kruizeAPI_seconds_count{api="listRecommendations",application="Kruize",method="GET",} 11.0
+kruizeAPI_seconds_sum{api="listRecommendations",application="Kruize",method="GET",} 0.172263513
+kruizeAPI_seconds_count{api="listExperiments",application="Kruize",method="GET",} 0.0
+kruizeAPI_seconds_sum{api="listExperiments",application="Kruize",method="GET",} 0.0
+kruizeAPI_seconds_count{api="updateResults",application="Kruize",method="POST",} 1000.0
+kruizeAPI_seconds_sum{api="updateResults",application="Kruize",method="POST",} 75.9051755
+# HELP kruizeAPI_seconds_max Time taken for Kruize APIs
+# TYPE kruizeAPI_seconds_max gauge
+kruizeAPI_seconds_max{api="createExperiment",application="Kruize",method="POST",} 0.006557411
+kruizeAPI_seconds_max{api="listRecommendations",application="Kruize",method="GET",} 0.016922301
+kruizeAPI_seconds_max{api="listExperiments",application="Kruize",method="GET",} 0.0
+kruizeAPI_seconds_max{api="updateResults",application="Kruize",method="POST",} 0.368578992
+# HELP kruizeDB_seconds_max Time taken for KruizeDB methods
+# TYPE kruizeDB_seconds_max gauge
+kruizeDB_seconds_max{application="Kruize",method="addRecommendationToDB",} 0.00409967
+kruizeDB_seconds_max{application="Kruize",method="addResultsToDB",} 0.053821289
+kruizeDB_seconds_max{application="Kruize",method="loadAllRecommendations",} 0.0
+kruizeDB_seconds_max{application="Kruize",method="loadAllExperiments",} 0.0
+kruizeDB_seconds_max{application="Kruize",method="addExperimentToDB",} 0.002835848
+kruizeDB_seconds_max{application="Kruize",method="loadResultsByExperimentName",} 0.278254925
+kruizeDB_seconds_max{application="Kruize",method="loadExperimentByName",} 0.015331482
+kruizeDB_seconds_max{application="Kruize",method="loadAllResults",} 0.0
+kruizeDB_seconds_max{application="Kruize",method="loadRecommendationsByExperimentName",} 0.00228154
+# HELP kruizeDB_seconds Time taken for KruizeDB methods
+# TYPE kruizeDB_seconds summary
+kruizeDB_seconds_count{application="Kruize",method="addRecommendationToDB",} 50.0
+kruizeDB_seconds_sum{application="Kruize",method="addRecommendationToDB",} 0.143178304
+kruizeDB_seconds_count{application="Kruize",method="addResultsToDB",} 1000.0
+kruizeDB_seconds_sum{application="Kruize",method="addResultsToDB",} 4.77083978
+kruizeDB_seconds_count{application="Kruize",method="loadAllRecommendations",} 0.0
+kruizeDB_seconds_sum{application="Kruize",method="loadAllRecommendations",} 0.0
+kruizeDB_seconds_count{application="Kruize",method="loadAllExperiments",} 0.0
+kruizeDB_seconds_sum{application="Kruize",method="loadAllExperiments",} 0.0
+kruizeDB_seconds_count{application="Kruize",method="addExperimentToDB",} 10.0
+kruizeDB_seconds_sum{application="Kruize",method="addExperimentToDB",} 0.101396863
+kruizeDB_seconds_count{application="Kruize",method="loadResultsByExperimentName",} 1000.0
+kruizeDB_seconds_sum{application="Kruize",method="loadResultsByExperimentName",} 23.487258217
+kruizeDB_seconds_count{application="Kruize",method="loadExperimentByName",} 1031.0
+kruizeDB_seconds_sum{application="Kruize",method="loadExperimentByName",} 2.442860327
+kruizeDB_seconds_count{application="Kruize",method="loadAllResults",} 0.0
+kruizeDB_seconds_sum{application="Kruize",method="loadAllResults",} 0.0
+kruizeDB_seconds_count{application="Kruize",method="loadRecommendationsByExperimentName",} 11.0
+kruizeDB_seconds_sum{application="Kruize",method="loadRecommendationsByExperimentName",} 0.022591896

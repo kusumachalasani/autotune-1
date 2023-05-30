@@ -422,8 +422,8 @@ def match_metrics(output_metrics):
     metrics = []
     for metric in match_metrics:
         metric_category, metric_type, name, http_method, value = metric
-        metrics = f"Metric Category: {metric_category}, Metric Type: {metric_type}, Name: {name}, Value: {value}"
-        metrics.append(metrics)
+        metrics_str = f"Metric Category: {metric_category}, Metric Type: {metric_type}, Name: {name}, Value: {value}"
+        metrics.append(metrics_str)
 
     assert createExperimentCount_STATUS in metrics, "createExperimentCount_STATUS assertion failed"
     assert createExperimentSum_STATUS in metrics, "createExperimentSum_STATUS assertion failed"
