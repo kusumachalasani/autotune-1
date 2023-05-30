@@ -425,6 +425,16 @@ def match_metrics(output_metrics):
         metrics_str = f"Metric Category: {metric_category}, Metric Type: {metric_type}, Name: {name}, Value: {value}"
         metrics.append(metrics_str)
 
+    tolerance = 40
+
+    assert any(abs(metric - float(createExperimentCount_STATUS.split(":")[-1])) <= tolerance for metric in metrics), "createExperimentCount_STATUS assertion failed"
+    assert any(abs(metric - float(createExperimentSum_STATUS.split(":")[-1])) <= tolerance for metric in metrics), "createExperimentSum_STATUS assertion failed"
+    assert any(abs(metric - float(listRecommendationsCount_STATUS.split(":")[-1])) <= tolerance for metric in metrics), "listRecommendationsCount_STATUS assertion failed"
+    assert any(abs(metric - float(listRecommendationsSum_STATUS.split(":")[-1])) <= tolerance for metric in metrics), "listRecommendationsSum_STATUS assertion failed"
+    assert any(abs(metric - float(listExperimentsCount_STATUS.split(":")[-1])) <= tolerance for metric in metrics), "listExperimentsCount_STATUS assertion failed"
+    assert any(abs(metric - float(listExperimentsSum_STATUS.split(":")[-1])) <= tolerance for metric in metrics), "listExperimentsSum_STATUS assertion failed"
+
+
     assert createExperimentCount_STATUS in metrics, "createExperimentCount_STATUS assertion failed"
     assert createExperimentSum_STATUS in metrics, "createExperimentSum_STATUS assertion failed"
     assert listRecommendationsCount_STATUS in metrics, "listRecommendationsCount_STATUS assertion failed"
