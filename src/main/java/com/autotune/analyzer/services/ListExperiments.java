@@ -33,7 +33,9 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.fabric8.kubernetes.api.model.Duration;
 import io.micrometer.core.instrument.Timer;
+import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,10 +51,12 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.*;
 
 import static com.autotune.analyzer.experiment.Experimentator.experimentsMap;
 import static com.autotune.analyzer.utils.AnalyzerConstants.ServiceConstants.*;
 import static com.autotune.utils.TrialHelpers.updateExperimentTrial;
+import static io.micrometer.core.instrument.Timer.*;
 
 /**
  * Rest API used to list experiments.
@@ -70,7 +74,15 @@ public class ListExperiments extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Timer.Sample timerListExp = Timer.start(MetricsConfig.meterRegistry());
+        Sample timerListExp = start(MetricsConfig.meterRegistry());
+        String statusValue = "failure";
+
+        /*Random random = new Random();
+        int randomNumber = random.nextInt(2) + 1;
+        if (randomNumber == 1) {
+            statusValue = "success";
+        }
+        */
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType(JSON_CONTENT_TYPE);
         response.setCharacterEncoding(CHARACTER_ENCODING);
@@ -114,12 +126,15 @@ public class ListExperiments extends HttpServlet {
             }
             response.getWriter().println(gsonStr);
             response.getWriter().close();
-        } catch (Exception e) {
+            } catch (Exception e) {
             LOGGER.error("Exception: " + e.getMessage());
             e.printStackTrace();
             sendErrorResponse(response, e, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         } finally {
-            if (null != timerListExp) timerListExp.stop(MetricsConfig.timerListExp);
+            if (null != timerListExp) {
+                MetricsConfig.timerListExp = MetricsConfig.timerBListExp.tag("status", statusValue).register(MetricsConfig.meterRegistry());
+                timerListExp.stop(MetricsConfig.timerListExp);
+            }
         }
     }
 

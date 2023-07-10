@@ -69,6 +69,7 @@ public class UpdateResults extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String statusValue = "failure";
         Timer.Sample timerUpdateResults = Timer.start(MetricsConfig.meterRegistry());
         Map<String, KruizeObject> mKruizeExperimentMap = new ConcurrentHashMap<String, KruizeObject>();;
         try {
@@ -113,6 +114,7 @@ public class UpdateResults extends HttpServlet {
                 }
 
                 if (validationOutputData.isSuccess() && addedToDB.isSuccess()) {
+                    statusValue = "success";
                     boolean recommendationCheck = experimentInitiator.generateAndAddRecommendations(mKruizeExperimentMap, experimentResultDataList);
                     if (!recommendationCheck)
                         LOGGER.error("Failed to create recommendation for experiment: %s and interval_end_time: %s",
@@ -128,7 +130,10 @@ public class UpdateResults extends HttpServlet {
             e.printStackTrace();
             sendErrorResponse(response, e, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         } finally {
-            if (null != timerUpdateResults) timerUpdateResults.stop(MetricsConfig.timerUpdateResults);
+            if (null != timerUpdateResults) {
+                MetricsConfig.timerCreateExp = MetricsConfig.timerBUpdateResults.tag("status", statusValue).register(MetricsConfig.meterRegistry());
+                timerUpdateResults.stop(MetricsConfig.timerUpdateResults);
+            }
         }
     }
 
