@@ -77,7 +77,7 @@ public class GenericRecommendationModel implements RecommendationModel{
 
         Double cpuRequest = 0.0;
         Double cpuRequestMax = Collections.max(cpuMaxValues);
-        if (null != cpuRequestMax && CPU_ONE_CORE > cpuRequestMax) {
+        if (null != cpuRequestMax && CPU_ONE_MILLICORE >= cpuRequestMax) {
             cpuRequest = cpuRequestMax;
         } else {
             cpuRequest = CommonUtils.percentile(modelCPUPercentile, cpuMaxValues);
@@ -159,8 +159,8 @@ public class GenericRecommendationModel implements RecommendationModel{
             double cpuThrottle = (cpuThrottleMax > 0) ? cpuThrottleMax : cpuThrottleAvg;
             double cpuUsageTotal = cpuUsage + cpuThrottle;
 
-            // Usage is less than 1 core, set it to the observed value.
-            if (CPU_ONE_CORE > cpuUsageTotal) {
+            // Usage is less than 1 milli core, set it to the observed value.
+            if (CPU_ONE_MILLICORE >= cpuUsageTotal) {
                 cpuRequestIntervalMax = cpuUsageTotal;
             } else {
                 // Sum/Avg should give us the number of pods
@@ -337,7 +337,7 @@ public class GenericRecommendationModel implements RecommendationModel{
 
         Double namespaceCpuRequest = 0.0;
         Double namespaceCpuRequestMax = Collections.max(namespaceCpuMaxValues);
-        if (null != namespaceCpuRequestMax && CPU_ONE_CORE > namespaceCpuRequestMax) {
+        if (null != namespaceCpuRequestMax && CPU_ONE_MILLICORE >= namespaceCpuRequestMax) {
             namespaceCpuRequest = namespaceCpuRequestMax;
         } else {
             namespaceCpuRequest = CommonUtils.percentile(modelCPUPercentile, namespaceCpuMaxValues);
