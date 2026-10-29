@@ -17,6 +17,7 @@
 package com.autotune.analyzer.recommendations;
 
 import com.autotune.analyzer.recommendations.layers.HotspotLayerRecommendationHandler;
+import com.autotune.analyzer.recommendations.layers.JvmLayerRecommendationHandler;
 import com.autotune.analyzer.recommendations.layers.QuarkusLayerRecommendationHandler;
 import com.autotune.analyzer.recommendations.layers.SemeruLayerRecommendationHandler;
 
@@ -35,6 +36,7 @@ public class LayerRecommendationHandlerRegistry {
         register(HotspotLayerRecommendationHandler.getInstance());
         register(SemeruLayerRecommendationHandler.getInstance());
         register(QuarkusLayerRecommendationHandler.getInstance());
+        register(JvmLayerRecommendationHandler.getInstance());
     }
 
     public static LayerRecommendationHandlerRegistry getInstance() {

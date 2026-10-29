@@ -1,0 +1,20 @@
+apiVersion: "recommender.com/v1"
+kind: "KruizeLayer"
+metadata:
+  name: "jvm"
+layer_name: jvm
+details: Generic JVM tunables (vendor unknown, detected via pod label)
+layer_presence:
+  queries:
+  - datasource: 'prometheus'
+    query: 'container_cpu_usage_seconds_total{} * on(namespace, pod) group_left(label_ibm_runtimes_intelligence_monitoring) kube_pod_labels{label_ibm_runtimes_intelligence_monitoring="true"}'
+    key: pod
+tunables:
+- name: MaxRAMPercentage
+  description: 'Maximum RAM percentage to allocate'
+  value_type: integer
+  lower_bound: '25'
+  upper_bound: '90'
+  step: 1
+  units: '%'
+

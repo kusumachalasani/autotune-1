@@ -679,6 +679,7 @@ public class AnalyzerConstants {
         public static final String LAYER_HOTSPOT = "hotspot";
         public static final String LAYER_QUARKUS = "quarkus";
         public static final String LAYER_SEMERU = "semeru";
+        public static final String LAYER_JVM = "jvm";
         public static final String LAYER_NODEJS = "nodejs";
 
         private AutotuneConfigConstants() {
@@ -711,12 +712,15 @@ public class AnalyzerConstants {
         public static final String HOTSPOT_LAYER = "hotspot";
         public static final String QUARKUS_LAYER = "quarkus";
         public static final String SEMERU_LAYER = "semeru";
+        // Generic JVM layer, used when the JVM vendor (hotspot/semeru) is unknown
+        public static final String JVM_LAYER = "jvm";
 
         public static final List<String> SUPPORTED_LAYERS = Arrays.asList(
                 CONTAINER_LAYER,
                 HOTSPOT_LAYER,
                 QUARKUS_LAYER,
-                SEMERU_LAYER
+                SEMERU_LAYER,
+                JVM_LAYER
         );
 
         /**
@@ -734,6 +738,7 @@ public class AnalyzerConstants {
             public static final String DETECTING_LAYERS = "Detecting layers for container '{}' in namespace '{}'";
             public static final String LAYER_DETECTED = "Detected layer: '{}' for container '{}'";
             public static final String LAYER_NOT_DETECTED = "Layer '{}' not detected for container '{}'";
+            public static final String LAYER_IGNORED_SPECIFIC_JVM_DETECTED = "Layer '{}' ignored for container '{}' as specific JVM layer(s) {} detected";
             public static final String NO_PRESENCE_DETECTOR = "Layer '{}' has no presence detector configured, skipping";
             public static final String LABEL_BASED_PRESENCE_NOT_IMPLEMENTED = "Skipping layer '{}' configured with LabelBasedPresence: label-based presence detection is not yet implemented; this layer will not be auto-detected";
             public static final String NO_LAYERS_IN_DB = "No layers found in database";

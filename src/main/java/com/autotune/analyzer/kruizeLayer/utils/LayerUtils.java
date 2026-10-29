@@ -19,6 +19,7 @@ package com.autotune.analyzer.kruizeLayer.utils;
 import com.autotune.analyzer.kruizeLayer.KruizeLayer;
 import com.autotune.analyzer.kruizeLayer.presence.LabelBasedPresence;
 import com.autotune.analyzer.kruizeLayer.presence.QueryBasedPresence;
+import com.autotune.analyzer.utils.AnalyzerConstants.LayerConstants;
 import com.autotune.analyzer.utils.AnalyzerConstants.LayerConstants.LogMessages;
 import com.autotune.database.service.ExperimentDBService;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Utility class for layer detection operations
@@ -116,6 +118,17 @@ public class LayerUtils {
                 LOGGER.error(LogMessages.ERROR_DETECTING_LAYER,
                         layer.getLayerName(), e.getMessage(), e);
                 // Continue to next layer instead of failing completely
+            }
+        }
+
+        // The generic JVM layer is only a fallback: ignore it when the specific JVM layer is known
+        if (detectedLayers.containsKey(LayerConstants.JVM_LAYER)) {
+            List<String> specificJvmLayers = Stream.of(LayerConstants.HOTSPOT_LAYER, LayerConstants.SEMERU_LAYER)
+                    .filter(detectedLayers::containsKey).toList();
+            if (!specificJvmLayers.isEmpty()) {
+                detectedLayers.remove(LayerConstants.JVM_LAYER);
+                LOGGER.debug(LogMessages.LAYER_IGNORED_SPECIFIC_JVM_DETECTED,
+                        LayerConstants.JVM_LAYER, containerName, specificJvmLayers);
             }
         }
 
