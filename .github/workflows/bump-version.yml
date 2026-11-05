@@ -1,0 +1,76 @@
+name: Bump Release Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      new_version:
+        description: 'New release version (e.g. 0.12)'
+        required: true
+        type: string
+      target_branch:
+        description: 'Target branch to open PR against (leave blank for selected branch)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Set up Java
+        uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12 # v4.7.0
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Bump Version in pom.xml and Manifests
+        id: bump
+        run: |
+          TARGET="${{ inputs.target_branch }}"
+          if [ -z "$TARGET" ]; then
+            TARGET="${{ github.ref_name }}"
+          fi
+          echo "target_branch=${TARGET}" >> $GITHUB_OUTPUT
+
+          OLD_VER=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "Bumping version from ${OLD_VER} to ${{ inputs.new_version }} on branch ${TARGET}"
+          echo "old_version=${OLD_VER}" >> $GITHUB_OUTPUT
+
+          mvn versions:set -DnewVersion="${{ inputs.new_version }}" -DgenerateBackupPoms=false
+
+          find manifests/crc -name "*.yaml" -exec sed -i \
+            "s|quay.io/kruize/autotune_operator:${OLD_VER}|quay.io/kruize/autotune_operator:${{ inputs.new_version }}|g" {} +
+
+      - name: Verify Build
+        run: mvn clean compile
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
+        with:
+          committer: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          commit-message: |
+            Bump Kruize release version to ${{ inputs.new_version }}
+
+            Signed-off-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+          title: "Bump Kruize release version to ${{ inputs.new_version }} [${{ steps.bump.outputs.target_branch }}]"
+          body: |
+            ### Automated Version Bump
+            - **Target Branch:** `${{ steps.bump.outputs.target_branch }}`
+            - **Previous Version:** `${{ steps.bump.outputs.old_version }}`
+            - **New Version:** `${{ inputs.new_version }}`
+            
+            #### Changed Files:
+            - `pom.xml`
+            - Manifests in `manifests/crc/`
+          base: ${{ steps.bump.outputs.target_branch }}
+          branch: "bump_version_${{ inputs.new_version }}_${{ steps.bump.outputs.target_branch }}"
+          delete-branch: true
